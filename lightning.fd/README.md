@@ -59,7 +59,7 @@ Subroutines for reading lightning observations in BUFR format and writing lightn
 
 ### module\_netCDFsub\_lightning.f90
 
-Subroutunes for reading lightning observations in netCDF format.
+Subroutines for reading lightning observations in netCDF format.
 
 ### process\_Lightning.f90
 
