@@ -78,19 +78,19 @@ Module that defines a single subroutine for interpolating gridded radar reflecti
 
 ### module\_netCDFsub.f90
 
-Module that defines various subroutines for reading radar reflectivity observations in netCDF format. Used by `module_read_NSSl_mosaic.f90`.
+Module that defines various subroutines for reading radar reflectivity observations in netCDF format. Used by `module_read_NSSL_mosaic.f90`.
 
 ### module\_read\_grib2.f90
 
-Module that defines various subroutines for reading radar reflectivity observations in GRIB2 format. Used by `module_read_NSSl_mosaic.f90`.
+Module that defines various subroutines for reading radar reflectivity observations in GRIB2 format. Used by `module_read_NSSL_mosaic.f90`.
 
 ### module\_read\_ncep\_binary.f90
 
-Module that defines various subroutines for reading radar reflectivity observations in NCEP binary format. Used by `module_read_NSSl_mosaic.f90`.
+Module that defines various subroutines for reading radar reflectivity observations in NCEP binary format. Used by `module_read_NSSL_mosaic.f90`.
 
 ### module\_read\_nssl\_binary.f90
 
-Module that defines various subroutines for reading radar reflectivity observations in NSSL binary format. Used by `module_read_NSSl_mosaic.f90`.
+Module that defines various subroutines for reading radar reflectivity observations in NSSL binary format. Used by `module_read_NSSL_mosaic.f90`.
 
 ### module\_read\_NSSL\_mosaic.f90  
 
