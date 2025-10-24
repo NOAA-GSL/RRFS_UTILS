@@ -2,7 +2,7 @@
 
 This program takes radar reflectivity mosaic observations (e.g., MRMS) and interpolates them to the MPAS mesh. Note that this program is specifically designed for the nonvariational cloud analysis, so there is no observation thinning, which is required for other purposes (e.g., radar reflectivity data assimilation).
 
-## Dependencies external to mosaic\_nonvar.fd
+## Dependencies external to refmosaic\_nonvar.fd
 
 - MPI library
 - NetCDF-Fortran library
@@ -14,7 +14,7 @@ This program takes radar reflectivity mosaic observations (e.g., MRMS) and inter
 
 ## Running
 
-To run mosaic\_nonvar.fd by itself, one can use the sample slurm submission script provided in this directory (`run_process_NSSL_mosaic.sh`). The program is designed to run on multiple processors, and depending on the input data type, there are a minimum number of processors that must be used:
+To run refmosaic\_nonvar.fd by itself, one can use the sample slurm submission script provided in this directory (`run_process_NSSL_mosaic.sh`). The program is designed to run on multiple processors, and depending on the input data type, there are a minimum number of processors that must be used:
 
 | tversion | Description | Processors |
 | -------- | ----------- | ---------- |
