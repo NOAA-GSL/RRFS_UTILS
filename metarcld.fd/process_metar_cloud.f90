@@ -3,8 +3,8 @@ program  process_metar_cloud
 !   PRGMMR: Ming Hu          ORG: GSD        DATE: 2009-09-04
 !
 ! ABSTRACT: 
-!     This routine read in NASA LaRC cloud products and 
-!     interpolate them into GSI mass grid
+!     This routine reads in METAR/ceilometer cloud observations and 
+!     interpolates them into the GSI mass grid.
 !
 ! PROGRAM HISTORY LOG:
 !
