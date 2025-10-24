@@ -21,7 +21,7 @@ load(pathJoin("g2tmpl", os.getenv("g2tmpl_ver") or "1.10.2"))
 --load(pathJoin("mapl", os.getenv("mapl_ver") or "2.40.3-esmf-8.5.0"))
 --load(pathJoin("scotch", os.getenv("scotch_ver") or "7.0.4"))
 
---load(pathJoin("bufr", os.getenv("bufr_ver") or "11.7.0"))
+load(pathJoin("bufr", os.getenv("bufr_ver") or "11.7.0"))
 --load(pathJoin("sigio", os.getenv("sigio_ver") or "2.3.2"))
 --load(pathJoin("sfcio", os.getenv("sfcio_ver") or "1.4.1"))
 --load(pathJoin("nemsio", os.getenv("nemsio_ver") or "2.5.4"))

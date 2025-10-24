@@ -10,6 +10,8 @@ load(pathJoin("stack-intel", os.getenv("stack_intel_ver") or "2021.5.0"))
 load(pathJoin("stack-intel-oneapi-mpi", os.getenv("stack_impi_ver") or "2021.5.1"))
 load(pathJoin("cmake", os.getenv("cmake_ver") or "3.23.1"))
 
+setenv("bufr_ver", "12.0.1")
+
 load("rrfs_common")
 load(pathJoin("wgrib2", os.getenv("wgrib2_ver") or "2.0.8"))
 

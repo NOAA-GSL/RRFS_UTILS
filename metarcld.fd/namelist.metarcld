@@ -1,0 +1,7 @@
+ &setup
+  analysis_time = 2024050813,
+  prepbufrfile='prepbufr'
+  twindin=0.5,
+  metar_impact_radius=17,
+  debug=1,
+ /

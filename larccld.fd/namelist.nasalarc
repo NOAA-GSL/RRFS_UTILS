@@ -1,0 +1,8 @@
+ &setup
+  analysis_time = 2024050813,
+  bufrfile='NASALaRCCloudInGSI_bufr.bufr',
+  npts_rad=3,
+  ioption = 2,
+  userDX = 3500.0,
+  debug=1,
+ /

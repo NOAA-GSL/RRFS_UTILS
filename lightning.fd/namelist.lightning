@@ -1,0 +1,10 @@
+ &setup
+  analysis_time = 2024050813,
+  minute=00,
+  trange_start=-10,
+  trange_end=10,
+  obs_type = "bufr",
+  proj_name = 'CONUS',
+  debug=1
+ /
+

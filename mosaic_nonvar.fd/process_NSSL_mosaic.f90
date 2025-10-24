@@ -1,0 +1,457 @@
+program process_NSSL_mosaic
+!
+!   PRGMMR: Ming Hu          ORG: GSD        DATE: 2007-12-17
+!
+! ABSTRACT: 
+!     This routine read in NSSL reflectiivty mosaic fiels and 
+!     interpolate them into GSI mass grid
+!
+!     tversion=8  : NSSL 8 tiles netcdf
+!     tversion=81 : NCEP 8 tiles binary
+!     tversion=4  : NSSL 4 tiles binary
+!     tversion=1  : NSSL 1 tile grib2
+!
+! PROGRAM HISTORY LOG:
+!
+!   variable list
+!
+! USAGE:
+!   INPUT FILES:  mosaic_files
+!
+!   OUTPUT FILES:
+!
+! REMARKS:
+!
+! ATTRIBUTES:
+!   LANGUAGE: FORTRAN 90 + EXTENSIONS
+!   MACHINE:  wJET
+!
+!$$$
+!
+!_____________________________________________________________________
+!
+  use mpi
+  use module_kinds, only: r_kind,i_kind
+  use module_read_NSSL_refmosaic, only: read_nsslref
+  use module_mpasio, only: read_MPAS_dim,read_MPAS_lat_lon,read_MPAS_1D_int
+  use module_write_nsslref, only: write_bufr_nsslref,write_netcdf_nsslref
+  use module_mosaic_interp, only: mosaic2grid
+
+  implicit none
+!
+  type(read_nsslref) :: readref 
+
+!
+! MPI variables
+  integer :: npe, mype, mypeLocal,ierror
+!
+!  gridded reflectivity
+  REAL, allocatable :: ref3d(:,:)   ! 3D reflectivity
+  REAL, allocatable :: ref0(:,:)   ! 3D reflectivity
+  REAL, allocatable :: tmp_ref(:,:,:)   ! temporary 3D reflectivity array
+  REAL(r_kind), allocatable :: ref3d_column(:,:)   ! 3D reflectivity in column
+!
+!  MPAS mesh
+  integer(i_kind) :: nCell
+  real, allocatable :: lat_m(:),lon_m(:)
+  integer, allocatable :: bdyMask(:)
+  CHARACTER*180   meshfile
+  CHARACTER*50    mpasfield
+!
+!  namelist files
+!
+  integer      ::  tversion
+  character*10 :: analysis_time
+  CHARACTER*180   dataPath
+  namelist/setup/ tversion,analysis_time,dataPath
+  integer(i_kind)  ::  idate
+!
+!  namelist and other variables for netcdf output
+!
+!  output_netcdf             logical controlling whether netcdf output file should be created
+!  max_height                maximum height (m MSL) for data to be retained
+!  use_clear_air_type        logical controlling whether to output clear-air (non-precipitation) reflectivity obs
+!  precip_dbz_thresh         threshold (dBZ) for minimum reflectivity that is considered precipitation
+!  clear_air_dbz_thresh      threshold (dBZ) for maximum reflectivity that is considered clear air
+!  clear_air_dbz_value       value (dBZ) assigned to clear-air reflectivity obs
+!  precip_dbz_horiz_skip     horizontal thinning factor for reflectivity data in precipitation
+!  precip_dbz_vert_skip      vertical thinning factor for reflectivity data in precipitation
+!  clear_air_dbz_horiz_skip  horizontal thinning factor for clear air reflectivity data
+!  clear_air_dbz_vert_skip   vertical thinning factor for clear air reflectivity data
+!  remove_bdy                logical controlling whether to set reflectivity values along the boundary as missing
+!
+  logical :: output_netcdf = .false.
+  real :: max_height = 20000.0
+  logical :: use_clear_air_type = .false.
+  real :: precip_dbz_thresh = 15.0
+  real :: clear_air_dbz_thresh = 0.0
+  real :: clear_air_dbz_value = 0.0
+  integer :: precip_dbz_horiz_skip = 0
+  integer :: precip_dbz_vert_skip = 0
+  integer :: clear_air_dbz_horiz_skip = 0
+  integer :: clear_air_dbz_vert_skip = 0
+  logical :: remove_bdy = .false.
+  namelist/setup_netcdf/ output_netcdf, max_height,                        &
+                         use_clear_air_type, precip_dbz_thresh,            &
+                         clear_air_dbz_thresh, clear_air_dbz_value,        &
+                         precip_dbz_horiz_skip, precip_dbz_vert_skip,      &
+                         clear_air_dbz_horiz_skip, clear_air_dbz_vert_skip,&
+                         remove_bdy
+  logical, allocatable :: precip_ob(:,:)
+  logical, allocatable :: clear_air_ob(:,:)
+  integer, parameter :: maxMosaiclvl=33
+  real :: height_real(maxMosaiclvl)
+  integer :: levelheight(maxMosaiclvl)
+  data levelheight /500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500,         &
+                    2750, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, &
+                    7500, 8000, 8500, 9000, 10000, 11000, 12000, 13000, 14000,  &
+                    15000, 16000, 17000, 18000, 19000/
+  integer num_precip_obs, num_clear_air_obs, num_obs
+  logical :: fileexist
+!
+!  ** misc
+!      
+  character*80 outfile
+  character*256 outfile_netcdf
+  integer i,k
+!  integer i,ii,j,jj,k
+  INTEGER(i_kind)  ::  maxlvl
+  INTEGER(i_kind)  ::  numlvl,numref
+  integer :: maxcores
+
+!**********************************************************************
+!
+!            END OF DECLARATIONS....start of program
+! MPI setup
+  call MPI_INIT(ierror) 
+  call MPI_COMM_SIZE(mpi_comm_world,npe,ierror)
+  call MPI_COMM_RANK(mpi_comm_world,mype,ierror)
+
+  if(mype==0) write(*,*) mype, 'deal with mosaic'
+
+  datapath="./"
+  open(15, file='namelist.mosaic')
+    read(15,setup)
+  close(15)
+
+  inquire(file='namelist.mosaic_netcdf', exist=fileexist)
+  if(fileexist) then
+    if(mype==0) write(*,*) 'reading namelist.mosaic_netcdf'
+    open(15, file='namelist.mosaic_netcdf')
+    read(15, setup_netcdf)
+    close(15)
+  endif
+
+!
+! Turn off thinning (not necessary for nonvar cloud analysis)
+!
+  if ( (precip_dbz_horiz_skip .gt. 0) .or. (precip_dbz_vert_skip .gt. 0) .or. &
+       (clear_air_dbz_horiz_skip .gt. 0) .or. (clear_air_dbz_vert_skip .gt. 0) ) then
+    if (mype==0) then
+      write(6,*) 
+      write(6,*) '!!!WARNING!!!'
+      write(6,*) 'Thinning of reflectivity observations not supported.'
+      write(6,*) 'Setting precip_dbz_vert_skip, precip_dbz_horiz_skip,' 
+      write(6,*) 'clear_air_dbz_vert_skip, and clear_air_dbz_horiz_skip to 0'
+      write(6,*)
+    endif
+  endif
+
+  precip_dbz_horiz_skip=0
+  precip_dbz_vert_skip=0
+  clear_air_dbz_horiz_skip=0
+  clear_air_dbz_vert_skip=0
+
+  if(mype==0) then
+    write(6,*)
+    write(6,*) 'tversion = ', tversion
+    write(6,*) 'analysis_time = ', analysis_time
+    write(6,*) 'dataPath = ', dataPath
+    write(6,*) 'output_netcdf = ', output_netcdf
+    write(6,*) 'max_height = ', max_height
+    write(6,*) 'use_clear_air_type = ', use_clear_air_type
+    write(6,*) 'precip_dbz_thresh = ', precip_dbz_thresh
+    write(6,*) 'clear_air_dbz_thresh = ', clear_air_dbz_thresh
+    write(6,*) 'clear_air_dbz_value = ', clear_air_dbz_value
+    write(6,*) 'precip_dbz_horiz_skip = ', precip_dbz_horiz_skip
+    write(6,*) 'precip_dbz_vert_skip = ', precip_dbz_vert_skip
+    write(6,*) 'clear_air_dbz_horiz_skip = ', clear_air_dbz_horiz_skip
+    write(6,*) 'clear_air_dbz_vert_skip = ', clear_air_dbz_vert_skip
+    write(6,*) 'remove_bdy = ', remove_bdy
+    write(6,*)
+  endif
+
+!
+!  safty check for cores used in this run
+!
+  read(analysis_time,'(I10)') idate
+  if(mype==0) write(6,*) 'cycle time is :', idate
+
+  if( tversion == 8 .or. tversion == 14) then
+     maxcores=8
+  elseif( tversion == 81 ) then
+     maxcores=8
+  elseif( tversion == 4 ) then
+     maxcores=4
+  elseif( tversion == 1 ) then
+     maxcores=33
+  else
+     write(*,*) 'unknow tversion !'
+     stop 1234
+  endif
+
+  if(mype==0) write(6,*) 'total cores for this run is ',npe
+  if(npe < maxcores) then
+     write(6,*) 'ERROR, this run must use ',maxcores,' or more cores !!!'
+     call MPI_FINALIZE(ierror)
+     stop 1234
+  endif
+!
+! read NSSL mosaic 
+!
+  mypeLocal=mype+1
+  call readref%init(tversion,mypeLocal,datapath)
+!
+! deal with certain tile
+!
+  call readref%readtile(mypeLocal)
+  call mpi_barrier(MPI_COMM_WORLD,ierror)
+!
+  maxlvl=readref%maxlvl
+!
+! get model domain dimension
+!
+  meshfile='mesh.nc'
+  mpasfield='nCells'
+  call read_MPAS_dim(meshfile, mpasfield, nCell)
+  allocate(lat_m(nCell))
+  allocate(lon_m(nCell))
+  call read_MPAS_lat_lon(meshfile, nCell, lat_m, lon_m)
+  if (remove_bdy) then
+    allocate(bdyMask(nCell))
+    mpasfield='bdyMaskCell'
+    call read_MPAS_1D_int(meshfile, nCell, mpasfield, bdyMask)
+  endif
+  if(mype==0) then
+    write(6,*)
+    write(6,*) 'model nCell   =', nCell
+    write(6,*) 'min model lat =', minval(lat_m)
+    write(6,*) 'min model lon =', minval(lon_m)
+    write(6,*) 'max model lat =', maxval(lat_m)
+    write(6,*) 'max model lon =', maxval(lon_m)
+    write(6,*)
+  endif
+
+  allocate(ref3d(nCell,maxlvl))
+  ref3d=-999.0
+  call mosaic2grid(readref,nCell,maxlvl,lon_m,lat_m,ref3d)
+  call mpi_barrier(MPI_COMM_WORLD,ierror)
+!
+!  collect data from all processes to root (0)
+!  ref0 is not needed on non-root processors, so we allocate ref0 as an array with 1 element as a 
+!  dummy argument. This avoids an error when running with the -check all flag
+!
+  if(mype==0) then
+     allocate( ref0(nCell,maxlvl) )
+  else
+     allocate( ref0(1,1) )
+  endif
+  call MPI_REDUCE(ref3d, ref0, nCell*maxlvl, MPI_REAL, MPI_MAX, 0, &
+                  MPI_COMM_WORLD, ierror)
+  deallocate(ref3d)
+!
+  if(mype==0) then
+     allocate(tmp_ref(1,nCell,maxlvl)) ! Need to output 3D array for cloudanalysis.fd
+     tmp_ref(1,:,:) = ref0(:,:)
+     write(outfile,'(a,a)') './', 'RefInGSI3D.dat'
+     write(outfile_netcdf,'(a,a)') './', 'Gridded_ref.nc'
+     OPEN(10,file=trim(outfile),form='unformatted')
+        write(10) maxlvl,1,nCell
+        write(10) tmp_ref
+     close(10)
+     deallocate(tmp_ref)
+     DO k=1,maxlvl
+        write(*,*) k,maxval(ref0(:,k)),minval(ref0(:,k))
+     ENDDO
+
+! turn this part off to speed up the process for RRFS.
+! Writing to a BUFR file has been adapted for MPAS, but has not been tested. Use at your own risk!!
+     if(1==2) then
+!
+        allocate(ref3d_column(maxlvl+1,nCell))
+        ref3d_column=-999.0
+        numref=0
+        DO i=1,nCell
+          numlvl=0
+          DO k=1,maxlvl
+            if(abs(ref0(i,k)) < 888.0 ) numlvl=numlvl+1
+          ENDDO
+          if(numlvl > 0 ) then
+            numref=numref+1
+            ref3d_column(1,numref)=float(i)
+            DO k=1,maxlvl
+               ref3d_column(1+k,numref)=ref0(i,k)
+            ENDDO
+          endif
+        ENDDO
+
+        write(*,*) 'Dump out results', numref, 'out of', nCell
+        OPEN(10,file='./'//'RefInGSI.dat',form='unformatted')
+          write(10) maxlvl,nCell,numref,1,2
+          write(10) ((ref3d_column(k,i),k=1,maxlvl+2),i=1,numref)
+        close(10)
+  
+        write(*,*) 'Start write_bufr_nsslref'
+        call write_bufr_nsslref(maxlvl,nCell,numref,ref3d_column,idate)
+        deallocate(ref3d_column)
+     endif
+
+     if ( output_netcdf .and. (maxlvl.eq.maxMosaiclvl) ) then
+
+        allocate( precip_ob(nCell,maxlvl) )
+        allocate( clear_air_ob(nCell,maxlvl) )
+
+        ! Don't produce any netcdf radar observations along the lateral boundaries
+        ! bdyMaskCell = 7 values indicate cells along the edge of the domain
+        if (remove_bdy) then
+          do i=1,nCell
+            if (bdyMask(i) .gt. 6) then
+              ref0(i,:) = -999.0
+            endif
+          enddo
+        endif
+
+        ! Identify precip and clear-air reflectivity observations
+        precip_ob(:,:) = .false.
+        clear_air_ob(:,:) = .false.
+        num_precip_obs = 0
+        num_clear_air_obs = 0
+        do i=1,nCell
+          do k=1,maxlvl
+            if ( (levelheight(k) .le. max_height) .and. (ref0(i,k) .ge. precip_dbz_thresh) ) then
+              precip_ob(i,k) = .true.
+              num_precip_obs = num_precip_obs + 1
+            else if ( use_clear_air_type .and. (levelheight(k) .le. max_height) .and. &
+                      (ref0(i,k) .gt. -900.0) .and. (ref0(i,k) .le. clear_air_dbz_thresh) ) then
+              clear_air_ob(i,k) = .true.
+              ref0(i,k) = clear_air_dbz_value
+              num_clear_air_obs = num_clear_air_obs + 1
+            endif
+          enddo
+        enddo
+        write(*,*) 'number of precip obs found, before thinning, = ', num_precip_obs
+        write(*,*) 'number of clear air obs found, before thinning, = ', num_clear_air_obs
+
+        ! Thin precip reflectivity observations (not needed for nonvar cloud analysis)
+        ! Note: This code does not work with MPAS
+        !if (precip_dbz_vert_skip .gt. 0) then
+        !  do k=1,maxlvl
+        !    if (mod(k-1, precip_dbz_vert_skip+1) .ne. 0) then
+        !      write(*,*) 'Thinning:  removing precip obs at level ', k
+        !      precip_ob(:,k) = .false.
+        !    endif
+        !  enddo
+        !endif
+        !if (precip_dbz_horiz_skip .gt. 0) then
+        !  write(*,*) 'Horizontal thinning of precip obs'
+        !  do i=1,nCell
+        !    if ( ref0(i,1) .gt. -900.0 )  then
+        !      do k=1,maxlvl
+        !        if (precip_ob(i,k)) then
+        !          do jj=max(2, j-precip_dbz_horiz_skip), min(nlat-1, j+precip_dbz_horiz_skip)
+        !            do ii=max(2, i-precip_dbz_horiz_skip), min(nlon-1, i+precip_dbz_horiz_skip)
+        !              precip_ob(ii,k) = .false.
+        !            enddo
+        !          enddo
+        !          precip_ob(i,k) = .true.
+        !        endif
+        !      enddo
+        !    endif
+        !  enddo
+        !endif
+
+        ! Thin clear-air reflectivity observations (not needed for nonvar cloud analysis)
+        ! Note: This code does not work with MPAS
+        !if (use_clear_air_type .and. (clear_air_dbz_vert_skip .gt. 0) ) then
+        !  do k=1,maxlvl
+        !    if (mod(k-1, clear_air_dbz_vert_skip+1) .ne. 0) then
+        !      write(*,*) 'Thinning:  removing clear air obs at level ', k
+        !      clear_air_ob(:,k) = .false.
+        !    endif
+        !  enddo
+        !endif
+        !if (use_clear_air_type .and. (clear_air_dbz_vert_skip .lt. 0) ) then
+        !  write(*,*) 'Thinning:  removing clear air obs at all but two levels'
+        !  clear_air_ob(:, 1:12) = .false.
+        !  clear_air_ob(:, 14:21) = .false.
+        !  clear_air_ob(:, 23:maxlvl) = .false.
+        !endif
+        !if (use_clear_air_type .and. (clear_air_dbz_horiz_skip .gt. 0) ) then
+        !  do i=1,nCell
+        !    if ( ref0(i,1) .gt. -900.0 )  then
+        !      do k=1,maxlvl
+        !        if (clear_air_ob(i,j,k)) then
+        !          do jj=max(2, j-clear_air_dbz_horiz_skip), min(nlat-1, j+clear_air_dbz_horiz_skip)
+        !            do ii=max(2, i-clear_air_dbz_horiz_skip), min(nlon-1, i+clear_air_dbz_horiz_skip)
+        !              clear_air_ob(ii,k) = .false.
+        !            enddo
+        !          enddo
+        !          clear_air_ob(i,k) = .true.
+        !        endif
+        !      enddo
+        !    endif
+        !  enddo
+        !endif
+
+        ! Count number of valid obs
+        num_obs = 0
+        do i=1,nCell
+          if ( ref0(i,1) .gt. -900.0 )  then
+            do k=1,maxlvl
+              if ( precip_ob(i,k) .or. clear_air_ob(i,k) ) then
+                num_obs = num_obs + 1
+              endif
+            enddo
+          endif
+        enddo
+        write(*,*) 'num_obs = ', num_obs
+
+        ! Write obs to netcdf file
+        do k=1,maxlvl
+          height_real(k) = levelheight(k)
+          do i=1,nCell
+            if ( .not. precip_ob(i,k) .and. .not. clear_air_ob(i,k) ) then
+              ref0(i,k) = -999.0
+            endif
+          enddo
+        enddo
+        call write_netcdf_nsslref( outfile_netcdf,maxlvl,nCell,ref0,lon_m,lat_m,height_real )
+
+        write(*,*) 'Finish netcdf output'
+
+        deallocate(precip_ob)
+        deallocate(clear_air_ob)
+
+     else if (output_netcdf) then
+
+        write(*,*) 'unknown vertical levels'
+        write(*,*) 'maxlvl = ', maxlvl
+        write(*,*) 'maxMosaiclvl = ', maxMosaiclvl
+        write(*,*) 'no netcdf output'
+
+     endif ! output_netcdf
+
+     deallocate(ref0)
+
+     endif ! mype==0
+
+  deallocate(lon_m)
+  deallocate(lat_m)
+
+  call readref%close()
+
+  if(mype==0)  write(6,*) "=== RAPHRRR PREPROCCESS SUCCESS ==="
+
+  call MPI_FINALIZE(ierror)
+!
+end program process_NSSL_mosaic

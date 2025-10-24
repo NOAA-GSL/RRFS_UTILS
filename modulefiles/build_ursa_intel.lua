@@ -20,6 +20,7 @@ setenv("w3emc_ver", "2.10.0")
 setenv("w3nco_ver", "2.4.1")
 setenv("nco_ver", "5.2.4")
 setenv("pio_ver", "2.6.2")
+setenv("bufr_ver", "12.1.0")
 
 load("rrfs_common")
 load(pathJoin("wgrib2", os.getenv("wgrib2_ver") or "3.6.0"))

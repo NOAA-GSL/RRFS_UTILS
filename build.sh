@@ -22,9 +22,14 @@ elif [[ -d /glade ]] ; then
     source /etc/profile.d/modules.sh
     platform=cheyenne
 
-################# Orion ####################
-elif [[ -d /work/noaa ]] ; then  ### orion
-    platform=orion
+################# MSU HPC2 ####################
+elif [[ -d /work/noaa ]] ; then
+    hoststr=$(hostname)
+    if [[ "$hoststr" == "hercules"* ]]; then
+        platform=hercules
+    else
+        platform=orion
+    fi
 
 ################# Gaea C6 ####################
 elif [[ -d /gpfs/f6 ]] ; then ### gaea c6

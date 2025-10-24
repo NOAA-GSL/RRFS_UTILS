@@ -3,7 +3,7 @@ This module loads libraries for building the RRFS workflow on
 the NOAA RDHPC machine Hera using Intel-2023.2.0
 ]])
 
-whatis([===[Loads libraries needed for building the RRFS workflow on Hera ]===])
+whatis([===[Loads libraries needed for building the RRFS workflow on Gaea C6 ]===])
 
 prepend_path("MODULEPATH", "/ncrc/proj/epic/spack-stack/c6/spack-stack-1.9.2/envs/ue-intel-2023.2.0/install/modulefiles/Core")
 prepend_path("MODULEPATH", "/ncrc/proj/epic/spack-stack/c6/modulefiles")
@@ -26,6 +26,7 @@ setenv("w3emc_ver", "2.10.0")
 setenv("w3nco_ver", "2.4.1")
 setenv("nco_ver", "5.2.4")
 setenv("pio_ver", "2.6.2")
+setenv("bufr_ver", "12.1.0")
 
 load("rrfs_common")
 load(pathJoin("wgrib2", os.getenv("wgrib2_ver") or "3.6.0"))
