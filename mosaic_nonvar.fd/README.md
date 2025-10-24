@@ -98,7 +98,7 @@ Module that defines a derived type and associated subroutines for reading NSSL M
 
 ### module\_write\_nsslref.f90
 
-Module that defines various subroutines for writing output to either a BUFR ot netCDF file. Writing output to a BUFR file is manually disabled in `process_NSSL_mosaic.f90`.
+Module that defines various subroutines for writing output to either a BUFR or netCDF file. Writing output to a BUFR file is manually disabled in `process_NSSL_mosaic.f90`.
 
 ### process\_NSSL\_mosaic.f90
 
