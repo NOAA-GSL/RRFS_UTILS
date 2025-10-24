@@ -27,7 +27,7 @@ To run larccld.fd by itself, one can use the sample slurm submission script prov
 ### Outputs
 
 - `NASALaRC_cloud4mpas.bin`: Binary file with NASA LaRC data mapped to the MPAS mesh. This is the file used by cloudanalysis.fd.
-- `NASALaRCCloudInGSI_bufr.bufr`: Data as the previous bullet, but in BUFR format.
+- `NASALaRCCloudInGSI_bufr.bufr`: Same data as `NASALaRC_cloud4mpas.bin`, but in BUFR format.
 - `nasa_larc_obs_raw.txt`: Text file with the raw NASA LaRC observations (if `debug = 1`).
 - `nasa_larc_obs_interp.txt`: Text file with the NASA LaRC observations interpolated to MPAS mesh (if `debug = 1`).
 
