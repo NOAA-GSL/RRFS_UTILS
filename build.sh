@@ -56,8 +56,9 @@ module load build_${platform}_intel.lua
 module list 
 
 build_root=${dir_root}/build
-mkdir -p ${build_root}
-cd ${build_root}
+rm -rf "${build_root}"
+mkdir -p "${build_root}"
+cd "${build_root}" || exit 1
 
 cmake .. -DCMAKE_INSTALL_PREFIX=.
 
