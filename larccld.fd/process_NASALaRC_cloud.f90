@@ -404,8 +404,14 @@ program  process_NASALaRC_cloud
 !
 
      write(6,*)
-     write(6,*) 'number of MPAS cells outside of map projection =', noutside
-     write(6,*) 'percentage of MPAS cells outside of map projection =', 100. * real(noutside) / real(nCell)
+     if (noutside > 0) then
+        write(6,*) 'WARNING: Some MPAS cells lie outside of the map projection'
+        write(6,*) 'it is HIGHLY recommended that you switch to a larger map projection'
+        write(6,*) 'number of MPAS cells outside of map projection =', noutside
+        write(6,*) 'percentage of MPAS cells outside of map projection =', 100. * real(noutside) / real(nCell)
+     else
+        write(6,*) 'All MPAS cells lie within the map projection'
+     endif
      write(6,*)
      write(6,'(8a12)') 'im', 'lat', 'lon', 'w_pcld', 'w_tcld', 'w_frac', 'w_lwp ', 'nlev_cld'
      do im=1,nCell,nCell/50

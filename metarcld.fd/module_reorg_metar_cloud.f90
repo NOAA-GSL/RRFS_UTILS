@@ -74,6 +74,7 @@ subroutine reorg_metar_cloud_regular(cdata,nreal,ndata,nlat,nlon,nCell,&
 !
   integer(i_kind) :: ista_prev,ista_prev2,ista_save
   integer(i_kind) :: icell_prev,icell_prev2,icell_save
+  integer(i_kind) :: noutside
 
   real(r_kind),dimension(nreal)   :: cdata_temp
   real(r_kind),dimension(12)     :: cloudlevel_temp
@@ -251,23 +252,42 @@ subroutine reorg_metar_cloud_regular(cdata,nreal,ndata,nlat,nlon,nCell,&
   enddo
 
 ! Determine closest map projection grid point to each MPAS cell
+ 
+  noutside=0
   do icell = 1,nCell
 
-     i = int(x_mp_m(icell))
-     j = int(y_mp_m(icell))
+     i = int(x_mp_m(icell)+0.5)
+     j = int(y_mp_m(icell)+0.5)
 
-     if (first_cell(i,j) == null_p) then
-        first_cell(i,j) = icell
-     else
-        icell_prev = first_cell(i,j)
-        do while (icell_prev /= null_p )
-           icell_prev2= next_cell(icell_prev)
-           icell_save = icell_prev
-           icell_prev = icell_prev2
-        enddo
-        next_cell(icell_save) = icell
-     end if
+     if ((i < 1) .or. (i > nlon) .or. (j < 1) .or. (j > nlat)) then
+        noutside = noutside + 1
+     else 
+
+        if (first_cell(i,j) == null_p) then
+           first_cell(i,j) = icell
+        else
+           icell_prev = first_cell(i,j)
+           do while (icell_prev /= null_p )
+              icell_prev2= next_cell(icell_prev)
+              icell_save = icell_prev
+              icell_prev = icell_prev2
+           enddo
+           next_cell(icell_save) = icell
+        endif
+
+     endif
   enddo
+
+  write(6,*)
+  if (noutside > 0) then
+     write(6,*) 'WARNING: Some MPAS cells lie outside of the map projection'
+     write(6,*) 'it is HIGHLY recommended that you switch to a larger map projection'
+     write(6,*) 'number of MPAS cells outside of map projection =', noutside
+     write(6,*) 'percentage of MPAS cells outside of map projection =', 100. * real(noutside) / real(nCell)
+  else
+     write(6,*) 'All MPAS cells lie within the map projection'
+  endif
+  write(6,*)
 
    iout=0
    DO j = 1,nlat,aninc_cld_p
