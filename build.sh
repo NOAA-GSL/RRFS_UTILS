@@ -33,7 +33,7 @@ elif [[ -d /work/noaa ]] ; then
 
 ################# Gaea C6 ####################
 elif [[ -d /gpfs/f6 ]] ; then ### gaea c6
-    platform=gaeaC6
+    platform=gaeac6
 
 ################# WCOSS2 ####################
 elif [[ -d /lfs ]] ; then  ### orion
@@ -49,9 +49,6 @@ if [ ! -f $modulefile ]; then
     echo "modulefiles $modulefile does not exist"
     exit 10
 fi
-
-#source $modulefile
-set -x
 
 module purge
 module use ${dir_root}/modulefiles
