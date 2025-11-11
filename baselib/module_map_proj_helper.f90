@@ -34,13 +34,14 @@ module module_map_proj_helper
 
       if (trim(name) == 'CONUS') then
         ! Similar to HRRR Lambert Conformal projection, but slightly larger
+        ! Should be large enough for MPAS 12-km and 3-km CONUS domains
         lat1 = 38.5
         lon1 = -97.5
         truelat1 = 38.5
         truelat2 = 38.5
         stdlon = -97.5
         dx = 3000.
-        nlat = 1200
+        nlat = 1250
         nlon = 2000
         knowni = 0.5 * nlon - 1.
         knownj = 0.5 * nlat - 1.
