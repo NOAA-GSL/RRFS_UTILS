@@ -33,7 +33,7 @@ elif [[ -d /work/noaa ]] ; then
 
 ################# Gaea C6 ####################
 elif [[ -d /gpfs/f6 ]] ; then ### gaea c6
-    platform=gaeaC6
+    platform=gaeac6
 
 ################# WCOSS2 ####################
 elif [[ -d /lfs ]] ; then  ### orion
@@ -50,17 +50,15 @@ if [ ! -f $modulefile ]; then
     exit 10
 fi
 
-#source $modulefile
-set -x
-
 module purge
 module use ${dir_root}/modulefiles
 module load build_${platform}_intel.lua
 module list 
 
 build_root=${dir_root}/build
-mkdir -p ${build_root}
-cd ${build_root}
+rm -rf "${build_root}"
+mkdir -p "${build_root}"
+cd "${build_root}" || exit 1
 
 cmake .. -DCMAKE_INSTALL_PREFIX=.
 
