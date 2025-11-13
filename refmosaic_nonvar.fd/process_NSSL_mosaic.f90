@@ -301,8 +301,8 @@ program process_NSSL_mosaic
           write(10) ((ref3d_column(k,i),k=1,maxlvl+2),i=1,numref)
         close(10)
   
-        write(*,*) 'Start write_bufr_nsslref'
-        call write_bufr_nsslref(maxlvl,nCell,numref,ref3d_column,idate)
+!       write(*,*) 'Start write_bufr_nsslref'
+!       call write_bufr_nsslref(maxlvl,nCell,numref,ref3d_column,idate)
         deallocate(ref3d_column)
      endif
 
