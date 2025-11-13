@@ -387,8 +387,8 @@ program process_Lightning
       write(10) lightning
      close(10)
 
-     write(6,*) ' write lightning in BUFR for cycle time ',idate
-     call write_bufr_lightning(1,nCell,numlightning,lightning_out,idate)
+!    write(6,*) ' write lightning in BUFR for cycle time ',idate
+!    call write_bufr_lightning(1,nCell,numlightning,lightning_out,idate)
 
 !
 ! DEBUGGING: Write out interpolated lightning data to text file

@@ -425,7 +425,7 @@ program  process_NASALaRC_cloud
 !
 !  write out results
 !
-     call write_bufr_NASALaRC(bufrfile,analysis_time,1,nCell,userDX,index,w_pcld,w_tcld,w_frac,w_lwp,nlev_cld)
+!    call write_bufr_NASALaRC(bufrfile,analysis_time,1,nCell,userDX,index,w_pcld,w_tcld,w_frac,w_lwp,nlev_cld)
 !
 ! DEBUGGING: Write out interpolated NASA LaRC data to text file
 !
