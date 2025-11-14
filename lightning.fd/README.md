@@ -43,6 +43,7 @@ All namelist options are in a single section titles `&setup`
 | `trange_end` | 0 | Upper bound of observation temporal processing window (minutes). Only observations with a timestamp < (obs time + trange\_end) are used. |
 | `obs_type` | "none" | Observation file format. Options: "bufr" or "nldn\_nc". Only "bufr" has been tested. |
 | `proj_name` | CONUS | Map projection to use. Must be defined in `../share/map_proj_helper_mod.f90`. |
+| `search_rad` | 1 | How far to search around a map projection point containing lightning observations for an MPAS cell center. Units are grid boxes of map projection (so distance in meters = `(search_rad) X (grid spacing of map projection)`). Recommended value is `(MPAS mesh spacing) / (map projection grid spacing)`, rounded up to the nearest integer. |
 | `debug` | 0 | Option to print additional output for debugging. Set to 0 to not print any additional output. |
 
 ## Code Overview

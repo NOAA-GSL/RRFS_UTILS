@@ -73,14 +73,15 @@ program process_Lightning
 !
   character*10 :: analysis_time
   real :: trange_start,trange_end
-  integer :: minute,debug
+  integer :: minute,search_rad,debug
   character(len=20) :: obs_type
 
   integer      :: NLDN_filenum
   logical      :: IfAlaska
   character(len=25) :: proj_name
   namelist/setup/analysis_time,minute,trange_start,trange_end,&
-                 obs_type,NLDN_filenum,IfAlaska,proj_name,debug
+                 obs_type,NLDN_filenum,IfAlaska,proj_name,search_rad,&
+                 debug
 !
 !  ** misc
   integer, allocatable :: cell_id(:,:,:),lght_id(:,:,:),index_m(:,:),index_l(:,:)
@@ -111,6 +112,7 @@ program process_Lightning
      minute=0
      obs_type="none"
      proj_name='CONUS'
+     search_rad=1
      debug=0
      inquire(file='namelist.lightning', EXIST=ifexist )
      if(ifexist) then
@@ -330,8 +332,8 @@ program process_Lightning
                 l_id = lght_id(i,j,ilght)
                 d = 1.e9
                 nearest_id = -99
-                do ii=max(1,i-1), min(proj%nlon,i+1)
-                  do jj=max(1,j-1), min(proj%nlon,j+1)
+                do ii=max(1,i-search_rad), min(proj%nlon,i+search_rad)
+                  do jj=max(1,j-search_rad), min(proj%nlon,j+search_rad)
                     if (index_m(ii,jj).gt.0) then
                       do icell=1,index_m(ii,jj)
                         c_id = cell_id(ii,jj,icell)

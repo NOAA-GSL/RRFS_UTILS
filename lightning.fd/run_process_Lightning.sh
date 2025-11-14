@@ -51,6 +51,7 @@ cat << EOF > namelist.lightning
   trange_end=10,
   obs_type = "bufr",
   proj_name = '${proj_name}',
+  search_rad = 1,
   debug=1
  /
 
