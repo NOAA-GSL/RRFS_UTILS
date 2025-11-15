@@ -2,6 +2,7 @@
 #
 
 dir_root=$(pwd)
+COMPILER=${COMPILER:-intel}
 
 ################# Hera or Ursa ####################
 if [[ -d /scratch3 ]]; then
@@ -52,7 +53,7 @@ fi
 
 module purge
 module use ${dir_root}/modulefiles
-module load build_${platform}_intel.lua
+module load build_${platform}_${COMPILER}.lua
 module list 
 
 build_root=${dir_root}/build
