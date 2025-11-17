@@ -332,7 +332,7 @@ program process_Lightning
                 d = 1.e9
                 nearest_id = -99
                 do ii=max(1,i-search_rad), min(proj%nlon,i+search_rad)
-                  do jj=max(1,j-search_rad), min(proj%nlon,j+search_rad)
+                  do jj=max(1,j-search_rad), min(proj%nlat,j+search_rad)
                     if (index_m(ii,jj).gt.0) then
                       do icell=1,index_m(ii,jj)
                         c_id = cell_id(ii,jj,icell)
