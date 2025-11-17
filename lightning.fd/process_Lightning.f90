@@ -190,7 +190,6 @@ program process_Lightning
       write(6,*) 'it is HIGHLY recommended that you switch to a larger map projection'
       write(6,*) 'number of MPAS cells outside of map projection =', noutside
       write(6,*) 'percentage of MPAS cells outside of map projection =', 100. * real(noutside) / real(nCell)
-      write(6,*) int(6.8), int(6.2)
     else
       write(6,*) 'All MPAS cells lie within the map projection'
     endif
