@@ -1,40 +1,26 @@
 help([[
-This module loads libraries for building the RRFS workflow on
-the NOAA RDHPC machine Hera using Intel-2021.13.0
+This module loads libraries for rrfs-workflow
 ]])
 
-whatis([===[Loads libraries needed for building the RRFS workflow on Hera ]===])
-
+--whatis([===[Loads libraries for rrfs-workflow ]===])
 prepend_path("MODULEPATH", "/contrib/spack-stack/spack-stack-1.9.1/envs/ue-oneapi-2024.2.1/install/modulefiles/Core")
 
-load(pathJoin("stack-oneapi", os.getenv("stack_intel_ver") or "2024.2.1"))
-load(pathJoin("stack-intel-oneapi-mpi", os.getenv("stack_impi_ver") or "2021.13"))
-load(pathJoin("cmake", os.getenv("cmake_ver") or "3.27.9"))
+load("stack-oneapi/2024.2.1")
+load("stack-intel-oneapi-mpi/2021.13")
+load("cmake/3.27.9")
 
-setenv("jasper_ver", "2.0.32")
-setenv("zlib_ver", "1.2.13")
-setenv("libpng_ver", "1.6.37")
-setenv("g2_ver", "3.5.1")
-setenv("g2tmpl_ver", "1.13.0")
-setenv("w3emc_ver", "2.10.0")
-setenv("w3nco_ver", "2.4.1")
-setenv("nco_ver", "5.2.4")
-setenv("pio_ver", "2.6.2")
-setenv("bufr_ver", "12.1.0")
+load("parallelio/2.6.2")
+load("jasper/2.0.32")
+load("libpng/1.6.37")
+load("g2/3.5.1")
+load("g2tmpl/1.13.0")
+load("w3emc/2.10.0")
+load("w3nco/2.4.1")
+load("wgrib2/3.6.0")
+load("ncio/1.1.2")
+load("nco/5.2.4")
+load("bufr/12.1.0")
 
-load("rrfs_common")
-load(pathJoin("wgrib2", os.getenv("wgrib2_ver") or "3.6.0"))
-
-prepend_path("MODULEPATH", "/scratch2/BMC/rtrr/gge/lua")
-load("prod_util/2.1.1")
-
-unload("fms/2023.02.01")
-unload("g2tmpl/1.10.2")
-setenv("g2tmpl_ROOT","/scratch4/BMC/wrfruc/mhu/rrfs/lib/g2tmpl/install")
-setenv("FMS_ROOT","/scratch4/BMC/wrfruc/mhu/rrfs/lib/fms.2024.01/build")
-
-setenv("CMAKE_C_COMPILER","mpiicc")
-setenv("CMAKE_CXX_COMPILER","mpiicpc")
-setenv("CMAKE_Fortran_COMPILER","mpiifort")
-setenv("CMAKE_Platform","hera.intel")
-setenv("BLENDINGPYTHON","/contrib/miniconda3/4.5.12/envs/pygraf/bin/python")
+setenv("CMAKE_C_COMPILER", "mpiicc")
+setenv("CMAKE_CXX_COMPILER", "mpiicpc")
+setenv("CMAKE_Fortran_COMPILER", "mpiifort")

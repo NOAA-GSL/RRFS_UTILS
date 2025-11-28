@@ -1,29 +1,26 @@
 help([[
-This module loads libraries for building the RRFS workflow on
-the MSU machine Orion using Intel-2021.9.0
+This module loads libraries for rrfs-workflow
 ]])
 
-whatis([===[Loads libraries needed for building the RRFS worfklow on Orion ]===])
+whatis([===[Loads libraries for rrfs-workflow ]===])
+prepend_path("MODULEPATH", "/apps/contrib/spack-stack/spack-stack-1.9.3/envs/ue-oneapi-2024.2.1/install/modulefiles/Core")
 
-load("contrib")
-load("noaatools")
+load("stack-oneapi/2024.2.1")
+load("stack-intel-oneapi-mpi/2021.13")
+load("cmake/3.27.9")
 
-prepend_path("MODULEPATH", "/work/noaa/epic/role-epic/spack-stack/orion/spack-stack-1.6.0/envs/unified-env-rocky9/install/modulefiles/Core")
-load(pathJoin("stack-intel", os.getenv("stack_intel_ver") or "2021.9.0"))
-load(pathJoin("stack-intel-oneapi-mpi", os.getenv("stack_impi_ver") or "2021.9.0"))
-load(pathJoin("cmake", os.getenv("cmake_ver") or "3.23.1"))
+load("parallelio/2.6.2")
+load("jasper/2.0.32")
+load("libpng/1.6.37")
+load("g2/3.5.1")
+load("g2tmpl/1.13.0")
+load("w3emc/2.10.0")
+load("w3nco/2.4.1")
+load("wgrib2/3.6.0")
+load("ncio/1.1.2")
+load("nco/5.2.4")
+load("bufr/12.1.0")
 
-setenv("bufr_ver", "12.0.1")
-
-load("rrfs_common")
-load(pathJoin("wgrib2", os.getenv("wgrib2_ver") or "2.0.8"))
-
-prepend_path("MODULEPATH", "/work/noaa/rtrr/gge/lua")
-load("prod_util/2.0.15")
-
-unload("python/3.10.8")
-
-setenv("CMAKE_C_COMPILER","mpiicc")
-setenv("CMAKE_CXX_COMPILER","mpiicpc")
-setenv("CMAKE_Fortran_COMPILER","mpiifort")
-setenv("CMAKE_Platform","orion.intel")
+setenv("CMAKE_C_COMPILER", "mpiicc")
+setenv("CMAKE_CXX_COMPILER", "mpiicpc")
+setenv("CMAKE_Fortran_COMPILER", "mpiifort")
