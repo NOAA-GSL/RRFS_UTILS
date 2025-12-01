@@ -20,8 +20,7 @@ elif [[ -d /jetmon ]] ; then
 
 ################# Cheyenne ####################
 elif [[ -d /glade ]] ; then
-    source /etc/profile.d/modules.sh
-    platform=cheyenne
+    platform=derecho
 
 ################# MSU HPC2 ####################
 elif [[ -d /work/noaa ]] ; then
