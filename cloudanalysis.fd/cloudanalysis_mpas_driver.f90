@@ -404,15 +404,15 @@ program cloudanalysis
                       'Surface cloud observations are read in successfully'
      istat_surface=1
      close(lunin)
+  else
+     if(mype == 0) write(6,*) 'gsdcloudanalysis: ',                                  &
+                      'No surface cloud observations available'
   endif
 
 !!  1.2.6 read in reflectivity mosaic
 !!
   fileexist=.false.
   obsfile='RefInGSI3D.dat'
-  write(6,*)
-  write(6,*) 'processing ',trim(obsfile)
-
   inquire(file=trim(obsfile),exist=fileexist)
   if(fileexist) then
      nsat1=0
@@ -425,15 +425,24 @@ program cloudanalysis
                    ' radar reflectivity is read in successfully'
      istat_radar=1
      close(lunin)
+  else
+     write(6,*) 'gsdcloudanalysis: ',                         &
+                   'No radar reflectivity observations available'
   endif
 !
 !  1.2.8 read in lightning
 !
   fileexist=.false.
   obsfile='LightningInMPAS.dat'
-  call read_Lightning2cld(obsfile,lon2,lat2,istart,jstart,lightning, &
-                          istat_lightning)
-  write(6,*) 'gsdcloudanalysis: Lightning is read in successfully'
+  inquire(file=trim(obsfile),exist=fileexist)
+  if(fileexist) then
+     call read_Lightning2cld(obsfile,lon2,lat2,istart,jstart,lightning, &
+                             istat_lightning)
+     write(6,*) 'gsdcloudanalysis: Lightning is read in successfully'
+  else
+     write(6,*) 'gsdcloudanalysis: ',                         &
+                   'No lightning observations available'
+  endif
 !
 !  1.2.9 read in NASA LaRC cloud products
 !
@@ -450,6 +459,9 @@ program cloudanalysis
                   'NASA LaRC cloud products are read in successfully'
      istat_nasalarc = 1
      close(lunin)
+  else
+     write(6,*) 'gsdcloudanalysis: ',                         &
+                   'No NASA LaRC cloud products available'
   endif
 ! 
 !!
