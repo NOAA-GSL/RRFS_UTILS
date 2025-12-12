@@ -460,9 +460,10 @@ program cloudanalysis
      istat_nasalarc = 1
      close(lunin)
   else
-     write(6,*) 'gsdcloudanalysis: ',                         &
-                   'No NASA LaRC cloud products available'
-  endif
+     if(mype == 0) then
+        write(6,*) 'gsdcloudanalysis: ',                         &
+                     'No NASA LaRC cloud products available'
+     endif
 ! 
 !!
 !!  1.4  if there are NASA LaRC cloud products, use them to replace NESDIS ones.
