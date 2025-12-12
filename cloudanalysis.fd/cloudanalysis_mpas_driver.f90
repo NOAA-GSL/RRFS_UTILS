@@ -438,9 +438,9 @@ program cloudanalysis
   if(fileexist) then
      call read_Lightning2cld(obsfile,lon2,lat2,istart,jstart,lightning, &
                              istat_lightning)
-     write(6,*) 'gsdcloudanalysis: Lightning is read in successfully'
+     if(mype == 0) write(6,*) 'gsdcloudanalysis: Lightning is read in successfully'
   else
-     write(6,*) 'gsdcloudanalysis: ',                         &
+     if(mype == 0) write(6,*) 'gsdcloudanalysis: ',                         &
                    'No lightning observations available'
   endif
 !
