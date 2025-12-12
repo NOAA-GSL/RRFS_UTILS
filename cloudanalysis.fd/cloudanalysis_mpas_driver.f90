@@ -400,13 +400,11 @@ program cloudanalysis
      deallocate(oistation)
      deallocate(ojstation)
 
-     if(mype == 0) write(6,*) 'gsdcloudanalysis: ',                                  &
-                      'Surface cloud observations are read in successfully'
+     if(mype == 0) write(6,*) 'gsdcloudanalysis: Surface cloud observations are read in successfully'
      istat_surface=1
      close(lunin)
   else
-     if(mype == 0) write(6,*) 'gsdcloudanalysis: ',                                  &
-                      'No surface cloud observations available'
+     if(mype == 0) write(6,*) 'gsdcloudanalysis: No surface cloud observations available'
   endif
 
 !!  1.2.6 read in reflectivity mosaic
@@ -421,13 +419,11 @@ program cloudanalysis
      allocate( ref_mosaic31(lon2,lat2,nmsclvl_radar) )
      ref_mosaic31=-99999.0_r_single
      call read_radar_ref_bin(mype,lunin,istart,jstart,lon2,lat2,nmsclvl_radar,ref_mosaic31)
-     write(6,*) 'gsdcloudanalysis: ',                         &
-                   ' radar reflectivity is read in successfully'
+     if(mype == 0) write(6,*) 'gsdcloudanalysis: radar reflectivity is read in successfully'
      istat_radar=1
      close(lunin)
   else
-     write(6,*) 'gsdcloudanalysis: ',                         &
-                   'No radar reflectivity observations available'
+     if(mype == 0) write(6,*) 'gsdcloudanalysis: No radar reflectivity observations available'
   endif
 !
 !  1.2.8 read in lightning
@@ -440,8 +436,7 @@ program cloudanalysis
                              istat_lightning)
      if(mype == 0) write(6,*) 'gsdcloudanalysis: Lightning is read in successfully'
   else
-     if(mype == 0) write(6,*) 'gsdcloudanalysis: ',                         &
-                   'No lightning observations available'
+     if(mype == 0) write(6,*) 'gsdcloudanalysis: No lightning observations available'
   endif
 !
 !  1.2.9 read in NASA LaRC cloud products
@@ -455,15 +450,12 @@ program cloudanalysis
      nasalarc_cld=miss_obs_real
 
      call read_NASALaRC_fv3(mype,lunin,lon2,lat2,istart,jstart,nasalarc_cld)
-     write(6,*) 'gsdcloudanalysis:',                       &
-                  'NASA LaRC cloud products are read in successfully'
+     if(mype == 0) write(6,*) 'gsdcloudanalysis: NASA LaRC cloud products are read in successfully'
      istat_nasalarc = 1
      close(lunin)
   else
-     if(mype == 0) then
-        write(6,*) 'gsdcloudanalysis: ',                         &
-                     'No NASA LaRC cloud products available'
-     endif
+     if(mype == 0) write(6,*) 'gsdcloudanalysis: No NASA LaRC cloud products available'
+  endif
 ! 
 !!
 !!  1.4  if there are NASA LaRC cloud products, use them to replace NESDIS ones.
