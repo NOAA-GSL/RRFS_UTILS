@@ -39,11 +39,14 @@ All namelist options are in a single section titles `&setup`
 
 | Parameter | Default | Description |
 | --------- | ------- | ----------- |
-| `analysis_time` | 2018051718 | Analysis valid time in YYYYMMDDHH format. |
+| `analysis_time` | 2026051718 | Analysis valid time in YYYYMMDDHH format. |
 | `bufrfile` | NASALaRCCloudInGSI\_bufr.bufr | Name of output BUFR file. |
 | `ioption` | 2 | Interpolation option. 1 = nearest neighbor, 2 = median. Only ioption = 2 has been tested. |
 | `npts_rad` | 1 | Half length of the square box used to interpolate NASA LaRC observations (see "code overview" section). Units are grid boxes of the map projection. |
 | `userDX` | 3000. | Model mesh spacing in meters |
+| `proj_name` | CONUS | Map projection to use. Must be defined in `../share/map_proj_helper_mod.f90`. |
+| `satidgoeswest` | 272 | Satellite ID for GOES-West. See "Satellite ID" section for details. |
+| `satidgoeseast` | 273 | Satellite ID for GOES-East. See "Satellite ID" section for details. |
 | `proj_name` | CONUS | Map projection to use. Must be defined in `../share/map_proj_helper_mod.f90`. |
 | `debug` | 0 | Option to print additional output for debugging. Set to 0 to not print any additional output |
 
@@ -80,3 +83,20 @@ This is the main driver for this program. The steps followed by the driver are a
     2. Determine all the observations that fall into each box. The observations in each box are saved in arrays that contain "xx" in the name.
     3. Match each MPAS cell with a map projection grid point and corresponding box. The NASA LaRC observations interpolated to that MPAS cell is a reduction of all observations within the corresponding box, with the reduction determined by `ioption`.
 4. Write out results to a binary file and BUFR file.
+
+## Satellite IDs
+
+The nonvariational cloud analysis requires the IDs of both GOES-East and GOES-West for proper decoding of the satellite cloud tops BUFR files. These IDs are tied to the satellite itself (e.g., GOES-18) rather than the satellite position (e.g., GOES-East). Therefore, the IDs of GOES-East and GOES-West change with time. The correct satellite IDs must be used for the corresponding analysis time, otherwise part (or all) of the satellite cloud tops will be set to missing. 
+
+Here is an incomplete list of satellite IDs (this is not being actively updated and time period dates are approximate):
+
+| Satellite | ID | Position | Time Period |
+| --------- | -- | -------- | ----------- |
+| GOES-13 |  | GOES-East | |
+| GOES-15 | 259 | GOES-West | |
+| GOES-16 | 270 | GOES-East | 12/18/2017 - 4/7/2025 |
+| GOES-17 | 271 | GOES-West | 2/12/2019 - 1/4/2023 |
+| GOES-18 | 272 | GOES-West | 1/4/2023 - present |
+| GOES-19 | 273 | GOES-East | 4/7/2025 - present |
+
+Additional information about the GOES operational status can be found on the [OSPO webpage](https://www.ospo.noaa.gov/operations/goes/status.html)

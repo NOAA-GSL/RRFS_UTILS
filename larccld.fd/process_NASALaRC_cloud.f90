@@ -43,11 +43,7 @@ program  process_NASALaRC_cloud
 !
 ! MPI variables
   integer :: npe, mype,ierror
-!SATID
-!  integer, parameter :: satidgoeswest=259  ! GOES 15  Stopped after March 2nd, 2020
-!  integer, parameter :: satidgoeswest=271  ! GOES 17 stopped after January 4th,2022
-  integer, parameter :: satidgoeswest=272  ! GOES 17 stopped after January 4th,2022
-  integer, parameter :: satidgoeseast=270  ! GOES 16
+
   integer,parameter  :: boxMAX=10
 !
 ! MPAS mesh
@@ -99,9 +95,11 @@ program  process_NASALaRC_cloud
   real (r_kind)      :: boxlat0(boxMAX)
   real (r_kind)      :: userDX
   character(len=25)  :: proj_name
+  integer            :: satidgoeswest,satidgoeseast
   integer            :: debug
   namelist/setup/ analysis_time, ioption, npts_rad,bufrfile, &
-                  boxhalfx, boxhalfy, boxlat0,userDX,proj_name,debug
+                  boxhalfx, boxhalfy, boxlat0,userDX,proj_name, &
+                  satidgoeswest,satidgoeseast,debug
 !
 !
 !  ** misc
@@ -133,7 +131,7 @@ program  process_NASALaRC_cloud
 !
 !  get namelist
 !
-     analysis_time=2018051718
+     analysis_time=2026051718
      bufrfile='NASALaRCCloudInGSI_bufr.bufr'
      npts_rad=1
      boxhalfx=-1
@@ -144,6 +142,8 @@ program  process_NASALaRC_cloud
      ioption = 2
      userDX=3000.0
      proj_name='CONUS'
+     satidgoeswest=272  ! GOES-18 (became operational ~1/4/2023)
+     satidgoeseast=273  ! GOES-19 (became operational ~4/7/2025)
      debug=0
  
      inquire(file='namelist.nasalarc', EXIST=ifexist )
