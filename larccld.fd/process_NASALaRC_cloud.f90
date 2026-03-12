@@ -157,8 +157,8 @@ program  process_NASALaRC_cloud
        write(*,*) 'No namelist file exist, use default values'
        write(*,*) "analysis_time,bufrfile,npts_rad,ioption"
        write(*,*) analysis_time, trim(bufrfile),npts_rad,ioption
-       write(*,*) "boxhalfx,boxhalfy,boxlat0,debug"
-       write(*,*) boxhalfx,boxhalfy,boxlat0,debug
+       write(*,*) "boxhalfx,boxhalfy,boxlat0,satidgoeswest,satidgoeseast,debug"
+       write(*,*) boxhalfx,boxhalfy,boxlat0,satidgoeswest,satidgoeseast,debug
      endif
 
 !

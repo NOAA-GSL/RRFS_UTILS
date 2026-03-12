@@ -91,8 +91,8 @@ Here is an incomplete list of satellite IDs (this is not being actively updated 
 
 | Satellite | ID | Position | Time Period |
 | --------- | -- | -------- | ----------- |
-| GOES-13 |  | GOES-East | |
-| GOES-15 | 259 | GOES-West | |
+| GOES-13 | Unknown | GOES-East | Unknown |
+| GOES-15 | 259 | GOES-West | Unknown |
 | GOES-16 | 270 | GOES-East | 12/18/2017 - 4/7/2025 |
 | GOES-17 | 271 | GOES-West | 2/12/2019 - 1/4/2023 |
 | GOES-18 | 272 | GOES-West | 1/4/2023 - present |
