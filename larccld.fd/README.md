@@ -47,7 +47,6 @@ All namelist options are in a single section titles `&setup`
 | `proj_name` | CONUS | Map projection to use. Must be defined in `../share/map_proj_helper_mod.f90`. |
 | `satidgoeswest` | 272 | Satellite ID for GOES-West. See "Satellite ID" section for details. |
 | `satidgoeseast` | 273 | Satellite ID for GOES-East. See "Satellite ID" section for details. |
-| `proj_name` | CONUS | Map projection to use. Must be defined in `../share/map_proj_helper_mod.f90`. |
 | `debug` | 0 | Option to print additional output for debugging. Set to 0 to not print any additional output |
 
 #### Vector Options
