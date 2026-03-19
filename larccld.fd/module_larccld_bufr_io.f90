@@ -100,7 +100,7 @@ subroutine read_NASALaRC_cloud_bufr(satfile,atime,satidgoeseast,satidgoeswest,ea
        obs_time=(hdr(1)-2000.0_8)*100000000.0_8+hdr(2)*1000000.0_8+hdr(3)*10000.0_8+hdr(4)*100.0_8+hdr(5)
        satid=int(hdr(7))
        if( (obs_time == east_time .and. satid==satidgoeseast ) .or.  &
-           (obs_time == west_time .and. (satid==satidgoeswest .or. satid==259 .or. satid==271) ) ) then
+           (obs_time == west_time .and. satid==satidgoeswest ) ) then
          call ufbint(unit_in,obs,7,1,iret,obstr)
          if(abs(obs(3,1) -4.0) < 1.e-4) then
            obs(7,1)=99999. ! clear
@@ -140,7 +140,8 @@ subroutine read_NASALaRC_cloud_bufr(satfile,atime,satidgoeseast,satidgoeswest,ea
 
 end subroutine read_NASALaRC_cloud_bufr
 
-subroutine read_NASALaRC_cloud_bufr_survey(satfile,satidgoeseast,satidgoeswest,east_time, west_time,maxobs)
+subroutine read_NASALaRC_cloud_bufr_survey(satfile,satidgoeseast,satidgoeswest,stop_if_wrong_ids, &
+                                           east_time,west_time,maxobs)
 !
 !   PRGMMR: Ming Hu          ORG: GSD        DATE: 2010-07-09
 !
@@ -188,6 +189,7 @@ subroutine read_NASALaRC_cloud_bufr_survey(satfile,satidgoeseast,satidgoeswest,e
 !SATID
   integer,intent(in) :: satidgoeswest
   integer,intent(in) :: satidgoeseast  
+  integer,intent(in) :: stop_if_wrong_ids  
   integer(8),intent(out) :: east_time, west_time
   integer,intent(out) :: maxobs
 
@@ -279,7 +281,7 @@ subroutine read_NASALaRC_cloud_bufr_survey(satfile,satidgoeseast,satidgoeswest,e
               numobs_east=num_subset_all(i)
          endif
       endif
-      if(num_satid(i) == satidgoeswest .or. num_satid(i)==259 .or. num_satid(i)==271 ) then
+      if(num_satid(i) == satidgoeswest ) then
          if(west_time < num_obstime_all(i)) then
              west_time=num_obstime_all(i)
              numobs_west=num_subset_all(i)
@@ -290,6 +292,15 @@ subroutine read_NASALaRC_cloud_bufr_survey(satfile,satidgoeseast,satidgoeswest,e
  write(*,*) 'east_time and number=',east_time,numobs_east
  write(*,*) 'west_time and number=',west_time,numobs_west
  
+ if( numobs_east==0 .or. numobs_west==0 ) then
+   if( stop_if_wrong_ids==1 ) then
+     write(*,*) "Error: satidgoeseast and/or satidgoeswest is incorrect"
+     stop 1234
+   else
+     write(*,*) "Warning: satidgoeseast and/or satidgoeswest is incorrect"
+   endif
+ endif
+
  maxobs=numobs_west+numobs_east
  maxobs=maxobs+int(maxobs*0.2)
  write(*,*) 'maxobs=',maxobs

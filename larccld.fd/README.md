@@ -47,6 +47,7 @@ All namelist options are in a single section titles `&setup`
 | `proj_name` | CONUS | Map projection to use. Must be defined in `../share/map_proj_helper_mod.f90`. |
 | `satidgoeswest` | 272 | Satellite ID for GOES-West. See "Satellite ID" section for details. |
 | `satidgoeseast` | 273 | Satellite ID for GOES-East. See "Satellite ID" section for details. |
+| `stop_id_wrong_ids` | 0 | Option to stop the program with a nonzero exit code if either no GOES-East or GOES-West observations are read (which usually indicates an incorrect satellite ID). 0 = option turned off, 1 = option enabled. |
 | `debug` | 0 | Option to print additional output for debugging. Set to 0 to not print any additional output |
 
 #### Vector Options
@@ -87,15 +88,15 @@ This is the main driver for this program. The steps followed by the driver are a
 
 The nonvariational cloud analysis requires the IDs of both GOES-East and GOES-West for proper decoding of the satellite cloud tops BUFR files. These IDs are tied to the satellite itself (e.g., GOES-18) rather than the satellite position (e.g., GOES-East). Therefore, the IDs of GOES-East and GOES-West change with time. The correct satellite IDs must be used for the corresponding analysis time, otherwise part (or all) of the satellite cloud tops will be set to missing. 
 
-Here is an incomplete list of satellite IDs (this is not being actively updated and time period dates are approximate):
+Here is an incomplete list of satellite IDs (this is not being actively updated):
 
-| Satellite | ID | Position | Time Period |
-| --------- | -- | -------- | ----------- |
+| Satellite | ID | Position | Time Period (YYYYMMDDHH) |
+| --------- | -- | -------- | ------------------------ |
 | GOES-13 | Unknown | GOES-East | Unknown |
 | GOES-15 | 259 | GOES-West | Unknown |
-| GOES-16 | 270 | GOES-East | 12/18/2017 - 4/7/2025 |
-| GOES-17 | 271 | GOES-West | 2/12/2019 - 1/4/2023 |
-| GOES-18 | 272 | GOES-West | 1/4/2023 - present |
-| GOES-19 | 273 | GOES-East | 4/7/2025 - present |
+| GOES-16 | 270 | GOES-East | Unknown - 2025040716 |
+| GOES-17 | 271 | GOES-West | Unknown - 2023010419 |
+| GOES-18 | 272 | GOES-West | 2023010420 - present |
+| GOES-19 | 273 | GOES-East | 2025040717 - present |
 
 Additional information about the GOES operational status can be found on the [OSPO webpage](https://www.ospo.noaa.gov/operations/goes/status.html)

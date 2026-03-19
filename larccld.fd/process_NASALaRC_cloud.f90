@@ -96,10 +96,12 @@ program  process_NASALaRC_cloud
   real (r_kind)      :: userDX
   character(len=25)  :: proj_name
   integer            :: satidgoeswest,satidgoeseast
+  integer            :: stop_if_wrong_ids
   integer            :: debug
   namelist/setup/ analysis_time, ioption, npts_rad,bufrfile, &
                   boxhalfx, boxhalfy, boxlat0,userDX,proj_name, &
-                  satidgoeswest,satidgoeseast,debug
+                  satidgoeswest,satidgoeseast,stop_if_wrong_ids, &
+                  debug
 !
 !
 !  ** misc
@@ -144,6 +146,7 @@ program  process_NASALaRC_cloud
      proj_name='CONUS'
      satidgoeswest=272  ! GOES-18 (became operational ~1/4/2023)
      satidgoeseast=273  ! GOES-19 (became operational ~4/7/2025)
+     stop_if_wrong_ids=0
      debug=0
  
      inquire(file='namelist.nasalarc', EXIST=ifexist )
@@ -189,7 +192,8 @@ program  process_NASALaRC_cloud
 !  read in the NASA LaRC cloud data
 !
      satfile='lgycld.bufr_d'
-     call read_NASALaRC_cloud_bufr_survey(satfile,satidgoeseast,satidgoeswest,east_time, west_time,maxobs)
+     call read_NASALaRC_cloud_bufr_survey(satfile,satidgoeseast,satidgoeswest,stop_if_wrong_ids, &
+                                          east_time,west_time,maxobs)
      if(maxobs==0) then
         write(*,*) "WARNING: no observation available"
         stop 0
