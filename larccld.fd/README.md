@@ -100,3 +100,7 @@ Here is an incomplete list of satellite IDs (this is not being actively updated)
 | GOES-19 | 273 | GOES-East | 2025040717 - present |
 
 Additional information about the GOES operational status can be found on the [OSPO webpage](https://www.ospo.noaa.gov/operations/goes/status.html)
+
+### Debugging Tips
+
+The `larccld.fd` program prints out which satellite IDs are found in the provided NASA Langley BUFR file. To see which IDs were found, search for `satid` in the program output. Observations from GOES-West and/or GOES-East will not be processed if the IDs in `satidgoeswest` and `satidgoeseast` do not match those found in the NASA Langley BUFR file.
