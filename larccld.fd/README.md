@@ -47,7 +47,7 @@ All namelist options are in a single section titles `&setup`
 | `proj_name` | CONUS | Map projection to use. Must be defined in `../share/map_proj_helper_mod.f90`. |
 | `satidgoeswest` | 272 | Satellite ID for GOES-West. See "Satellite ID" section for details. |
 | `satidgoeseast` | 273 | Satellite ID for GOES-East. See "Satellite ID" section for details. |
-| `stop_id_wrong_ids` | 0 | Option to stop the program with a nonzero exit code if either no GOES-East or GOES-West observations are read (which usually indicates an incorrect satellite ID). 0 = option turned off, 1 = option enabled. |
+| `stop_if_wrong_ids` | 0 | Option to stop the program with a nonzero exit code if no GOES-West and/or no GOES-East observations are read (which usually indicates an incorrect value for `satidgoeswest` and/or `satidgoeseast`). 0 = option turned off, 1 = option enabled. |
 | `debug` | 0 | Option to print additional output for debugging. Set to 0 to not print any additional output |
 
 #### Vector Options
