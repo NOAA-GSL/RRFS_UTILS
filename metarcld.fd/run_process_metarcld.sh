@@ -27,8 +27,9 @@ source ${env_dir}/${machine}.env
 module list
 echo
 
-#ulimit -s unlimited
-#ulimit -a
+# Set stack size to unlimited (necessary for some machines)
+ulimit -s unlimited
+ulimit -a
 
 # Get input data
 cp ${fix_dir}/prepobs_prep_RAP.bufrtable prepobs_prep.bufrtable
