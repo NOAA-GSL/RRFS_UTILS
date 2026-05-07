@@ -3,3 +3,4 @@
 
 # Ignore build directory
 build/
+modulefiles/build_hostgeneric_intel.lua

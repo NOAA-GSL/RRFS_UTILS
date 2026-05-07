@@ -5,7 +5,9 @@ dir_root=$(pwd)
 COMPILER=${COMPILER:-intel}
 
 ################# Hera or Ursa ####################
-if [[ -d /scratch3 ]]; then
+if [[ "${MACHINE:-''}" == "hostgeneric" ]]; then
+    platform="hostgeneric"
+elif [[ -d /scratch3 ]]; then
     if [[ -d /apps/slurm_hera ]]; then
         platform=hera
     else
@@ -43,11 +45,6 @@ elif [[ -d /lfs ]] ; then  ### orion
 else
     echo -e "\nunknown machine"
     exit 9
-fi
-
-if [ ! -f $modulefile ]; then
-    echo "modulefiles $modulefile does not exist"
-    exit 10
 fi
 
 module purge
