@@ -95,3 +95,11 @@ A full list of all parameters can be found in `namelist_mod.f90` and `rapidrefre
 ## Code Overview
 
 Refer to the `CMakeLists.txt` for the files actually compiled as part of this program. The main driver is `cloudanalysis_mpas_driver.f90` and `get_mpas_bk_mod.f90` contains all the subroutines for reading and writing to the MPAS netCDF files. The `NonVarCldLib/` directory contains various subroutines used the cloud analysis that are model agnostic.
+
+## Debugging
+
+On some machines (e.g., MSU HPC2 Hercules), this program can crash owing to the stack size being exceeded. This can be fixed by setting the stack size to unlimited in your run script:
+
+```
+ulimit -s unlimited
+```
