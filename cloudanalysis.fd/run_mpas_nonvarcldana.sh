@@ -29,6 +29,10 @@ source ${env_dir}/${machine}.env
 module list
 echo
 
+# Set stack size to unlimited (necessary for some machines)
+ulimit -s unlimited
+ulimit -a
+
 # Get input data
 cp ${mpas_invariant_file} invariant.nc
 cp ${mpasout_file} mpasout.nc

@@ -108,3 +108,11 @@ This is the main driver for this program. The steps followed by the driver inclu
 2. Interpolate reflectivity observations to the model using `mosaic2grid` from `mosaic_interp_mod.f90`.
 3. Dump output to `RefInGSI.dat`.
 4. If `output_netcdf = .true.`, perform additional processing and dump results to a netCDF file.
+
+## Debugging
+
+On some machines (e.g., MSU HPC2 Hercules), this program can crash owing to the stack size being exceeded. This can be fixed by setting the stack size to unlimited in your run script:
+
+```
+ulimit -s unlimited
+```

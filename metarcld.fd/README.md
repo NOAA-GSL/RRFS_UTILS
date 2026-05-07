@@ -82,3 +82,10 @@ This module contains a single subroutine that:
 
 This is the main driver for this program. It reads the MPAS mesh information, calls the subroutine in read\_prepbufr\_metar\_mod.f90, then writes the results to a binary file.
 
+## Debugging
+
+On some machines (e.g., MSU HPC2 Hercules), this program can crash owing to the stack size being exceeded. This can be fixed by setting the stack size to unlimited in your run script:
+
+```
+ulimit -s unlimited
+```
