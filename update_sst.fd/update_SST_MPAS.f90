@@ -46,7 +46,7 @@ subroutine update_SST_MPAS (sstRR, glat, glon, ncells, iyear,imonth,iday,if_upda
   REAL salt_lake,salton,champ
 
   real xc1,yc1, xc2,yc2
-  integer isup,jsup, iwin,jwin, isalton,jsalton, ifound
+  integer isup,jsup, iwin,jwin, isalton, ifound
 
   integer :: in_SF_LAKE_PHYSICS
   integer :: iwater,ilake,iice
@@ -106,6 +106,7 @@ subroutine update_SST_MPAS (sstRR, glat, glon, ncells, iyear,imonth,iday,if_upda
 !  update skin temperature over water
 !
 ! find i,j for a point in northern Lake Superior
+  isup=0
   suploop: DO I=1,ncells
    if((glat(i)>48.4 .and. glat(i)<49.6) .and. (glon(i)<-87.9 .and. glon(i)>-88.1)) then
      isup=i
@@ -126,11 +127,6 @@ subroutine update_SST_MPAS (sstRR, glat, glon, ncells, iyear,imonth,iday,if_upda
 !                      lakemask == 0; water point that is not lake: update SST
 !                      lakemask == 1; lake point
 !     water:  update SST
-       
-  if( lu_index(i) == ilake) then
-        nlake=nlake+1
-  endif
-  
   DO I=1,ncells
     if( xland(i) < 0.00001 ) then    ! water, xland = 0
     ! only unfrozen water points (sea or lakes)
@@ -150,12 +146,11 @@ subroutine update_SST_MPAS (sstRR, glat, glon, ncells, iyear,imonth,iday,if_upda
             ! --- Salton Sea -- California
             if (glat(i).gt.33. .and. glat(i).lt.33.7 .and.  &
                 glon(i).gt.-116.3 .and. glon(i).lt.-115.3) then
-            write(6,*)'Global data Salton Sea temp',i,j,sstRR(i)
+            write(6,*)'Global data Salton Sea temp',i,sstRR(i)
             sstRR(i) = salton
-            write(6,*)'Climatology Salton Sea temp',i,j,sstRR(i)  &
+            write(6,*)'Climatology Salton Sea temp',i,sstRR(i)  &
                 ,glat(i),glon(i)
               isalton=i
-              jsalton=j
             end if
 
             ! --- Lake Champlain -- Vermont
@@ -171,9 +166,11 @@ subroutine update_SST_MPAS (sstRR, glat, glon, ncells, iyear,imonth,iday,if_upda
             if (glat(i).gt.49. .and. glat(i).lt.51. .and. &
                glon(i).gt.-90. .and. glon(i).lt.-87.) then
                write(*,*)'Global data Lake Nipigon temp',i,sstRR(i)
-                sstRR(i) = sstRR(isup)
-                write(*,*)'Lake Nipigon temp',i,j,sstRR(i) &
+               if(isup > 0 ) then
+                 sstRR(i) = sstRR(isup)
+                 write(*,*)'Lake Nipigon temp',i,j,sstRR(i) &
                  ,glat(i),glon(i)
+               endif
             end if
             surftemp(i) = sstRR(i)
             sst(i)=sstRR(i)
@@ -282,7 +279,7 @@ subroutine cal_lake_climate_t(iyear,imonth,iday,salt_lake,salton,champ)
           1.3/
 
         real xc1,yc1, xc2,yc2
-        integer isup,jsup, iwin,jwin, isalton,jsalton
+        integer isup,jsup, iwin,jwin, isalton
 
       integer julm(13)
       data julm/0,31,59,90,120,151,181,212,243,273,304,334,365/

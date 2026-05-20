@@ -102,7 +102,7 @@ PROGRAM process_SST
 !
 ! read in global 0.083333 degre SST
 !
-     write(*,*) "===> read global SST and RTG SST landmask"
+     write(*,*) "===> read global SST"
      allocate(sstGlobal(4321,2160))
      file='RGT_SST.grib2'
      call read_sstGlobal_grib2(file,sstGlobal(1:4320,:),iyear,imonth,iday,ihr)
@@ -110,6 +110,7 @@ PROGRAM process_SST
 
 ! 
 ! Read in land sea tags (0 for ocean; 3 for land) 
+     write(*,*) "===> read RTG SST landmask"
 !
      allocate(imaskSST(4321,2160))
      OPEN (11,FILE='RTG_SST_landmask.dat')
@@ -190,12 +191,12 @@ SUBROUTINE read_sstGlobal_grib2(filename,sst,idatayr,idatamon,idataday,idatahh)
 !  USE GRIB_MOD
   implicit none
 
-  INTEGER JF
-  PARAMETER (JF=4320*2160)
+!  INTEGER JF
   character*100,intent(in) :: filename
-  REAL, intent(out)::  SST(JF)
+  REAL, intent(out), target::  SST(4320,2160)
   INTEGER,intent(out) :: idatayr,idatamon,idataday,idatahh
 
+  REAL,pointer ::  sst1d(:)
   real :: rlatmin,rlonmin
   real*8  :: rdx,rdy
   integer :: nx,ny
@@ -206,7 +207,8 @@ SUBROUTINE read_sstGlobal_grib2(filename,sst,idatayr,idatamon,idataday,idatahh)
   integer :: ntot
 
 !-----------------------------------------------------------------------
-
+!  JF=4320*2160
+  sst1d(1:size(SST)) => SST
      inquire(file=trim(filename),exist=fileexist)
      if( .not. fileexist) then
         write(*,*) 'file is not exist: ',trim(filename)
@@ -220,6 +222,6 @@ SUBROUTINE read_sstGlobal_grib2(filename,sst,idatayr,idatamon,idataday,idatahh)
                       idatayr,idatamon,idataday,idatahh,idatamm
 
      ntot = nx*ny
-     call read_grib2_sngle(filename,ntot,sst)
+     call read_grib2_sngle(filename,ntot,sst1d)
 
 end subroutine 

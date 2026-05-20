@@ -20,8 +20,8 @@ SUBROUTINE write_nc(ncells, lakemask_fv3, lakemask_mpas, index_i, index_j, xlon_
   real,allocatable :: tmpd1r4(:)
   integer,allocatable :: tmpd1i4(:)
 
-  integer :: startloc(3)
-  integer :: countloc(3)
+  integer :: startloc(1)
+  integer :: countloc(1)
   integer :: varid, dimids(4), start(4), count(4), chunksizes(4)
   character(len=20) :: local_varname
   integer :: cdfid,dimid_ncells
@@ -37,9 +37,9 @@ SUBROUTINE write_nc(ncells, lakemask_fv3, lakemask_mpas, index_i, index_j, xlon_
   dimids(1:4) = [dimid_ncells, 0,0,0]
   chunksizes(1:4) = [ncells,1,1,1]
   iret=nf90_def_var(cdfid, "latCell", NF90_FLOAT, dimids(1), varid)
-  iret=nf90_put_att(cdfid, varid, "long_name", "cell latitude in degree")
+  iret=nf90_put_att(cdfid, varid, "long_name", "cell latitude in radians")
   iret=nf90_def_var(cdfid, "lonCell", NF90_FLOAT, dimids(1), varid)
-  iret=nf90_put_att(cdfid, varid, "long_name", "cell longitude in degree")
+  iret=nf90_put_att(cdfid, varid, "long_name", "cell longitude in radians")
   iret=nf90_def_var(cdfid, "lakemask", NF90_INT, dimids(1), varid)
   iret=nf90_put_att(cdfid, varid, "long_name", "MPAS lake mask: 0=ocean, 1=lake, 2=land, 3=lake nearby FV3 lake, 4= lake not nearby Fv3 lake, 5 = great lakes ")
   iret=nf90_def_var(cdfid, "lakemask_fv3", NF90_INT, dimids(1), varid)
@@ -51,8 +51,8 @@ SUBROUTINE write_nc(ncells, lakemask_fv3, lakemask_mpas, index_i, index_j, xlon_
 
   iret=nf90_enddef(cdfid)
 
-  startloc=(/1,1,1/)
-  countloc=(/ncells,1,1/)
+  startloc(1)=1
+  countloc(1)=ncells
 
   local_varname="latCell"
   iret=nf90_inq_varid(cdfid,trim(adjustl(local_varname)),varid)

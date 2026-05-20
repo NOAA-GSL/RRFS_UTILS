@@ -269,7 +269,7 @@ PROGRAM generate_lakes
               do i=max(1,index_i(n)-nn),min(index_i(n)+nn,nlon)
                  if(lakemask(i,j)==1 .or. lakemask(i,j)==0) then
                     ifound=ifound+1
-                    area=abs(((i-index_i(n))*(i-index_i(n)))+(j-index_j(n)*(j-index_j(n))))
+                    area=abs(((i-index_i(n))*(i-index_i(n)))+((j-index_j(n))*(j-index_j(n))))
                     if(area_min > area) then
                        iii=i
                        jjj=j

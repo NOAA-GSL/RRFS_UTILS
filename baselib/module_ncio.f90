@@ -120,7 +120,7 @@ subroutine open_nc(this,filename,action,debug_level,ierror)
   integer,intent(out),optional :: ierror
 
   integer :: ncid, status
-  integer :: fileexist
+  logical :: fileexist
 
   this%debug_level=20
   if(present(debug_level)) this%debug_level=debug_level
