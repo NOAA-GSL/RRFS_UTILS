@@ -192,12 +192,12 @@ contains
        this%pdlat = 55._dp
        this%pdlon = -112.5_dp
        this%pdazi = 0.0_dp
-       this%delx = 0.0129656309291837_dp*dtor
-       this%dely = 0.0132456552576884_dp*dtor
-       this%a = 0.183131392268429_dp
-       this%k = -0.265835885178773_dp
-       this%lx=3962
-       this%ly=2712
+       this%delx = 0.0129665672419664_dp*dtor
+       this%dely = 0.0132464375726782_dp*dtor
+       this%a = 0.183035309495599_dp
+       this%k = -0.265943041019571_dp
+       this%lx=3951
+       this%ly=2701
        this%if_initial=.true.
     elseif(trim(grid_type)=="GSD_RAP13km") then   ! C819
        this%pdlat = 54._dp
