@@ -53,14 +53,14 @@ list(APPEND BASE_LIB_Targets map_proj_helper)
 #install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include DESTINATION ${CMAKE_INSTALL_PREFIX})
 #list(APPEND BASE_LIB_Targets map_util)
 #
-#add_library (esggrid_util STATIC module_esggrid_util.f90)
-#add_library(${PROJECT_NAME}::esggrid_util ALIAS esggrid_util)
-#target_link_libraries( esggrid_util PUBLIC ${PROJECT_NAME}::pesglib)
-#set_target_properties(esggrid_util PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
-#target_include_directories(esggrid_util PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-#                                               $<INSTALL_INTERFACE:include>)
-#install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include DESTINATION ${CMAKE_INSTALL_PREFIX})
-#list(APPEND BASE_LIB_Targets esggrid_util)
+add_library (esggrid_util STATIC module_esggrid_util.f90)
+add_library(${PROJECT_NAME}::esggrid_util ALIAS esggrid_util)
+target_link_libraries( esggrid_util PUBLIC ${PROJECT_NAME}::pesglib)
+set_target_properties(esggrid_util PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
+target_include_directories(esggrid_util PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+                                               $<INSTALL_INTERFACE:include>)
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include DESTINATION ${CMAKE_INSTALL_PREFIX})
+list(APPEND BASE_LIB_Targets esggrid_util)
 
 install(
   TARGETS ${BASE_LIB_Targets}

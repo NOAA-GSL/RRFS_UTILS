@@ -102,7 +102,7 @@ module module_ncio
 
 contains
 
-subroutine open_nc(this,filename,action,debug_level)
+subroutine open_nc(this,filename,action,debug_level,ierror)
 !
 ! open a netcdf file, set initial debug level
 !
@@ -117,13 +117,23 @@ subroutine open_nc(this,filename,action,debug_level)
   character(len=*),intent(in) :: filename
   character(len=1),intent(in) :: action
   integer,intent(in),optional :: debug_level
+  integer,intent(out),optional :: ierror
 
   integer :: ncid, status
+  logical :: fileexist
 
   this%debug_level=20
   if(present(debug_level)) this%debug_level=debug_level
 
+  if(present(ierror)) ierror=0
+  inquire(file=trim(filename),exist=fileexist)
+  if( .not. fileexist) then
+     write(*,*) 'WARNING:file does not exist:',trim(filename)
+     if(present(ierror)) ierror=1
+     return
+  endif
   this%filename=trim(filename)
+
 ! open existing netCDF dataset
   if(action=="r" .or. action=="R") then
      status = nf90_open(path = trim(filename), mode = nf90_nowrite, ncid = ncid)
