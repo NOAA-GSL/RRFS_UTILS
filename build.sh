@@ -4,52 +4,10 @@
 dir_root=$(pwd)
 COMPILER=${COMPILER:-intel}
 
-################# Hera or Ursa ####################
-if [[ "${MACHINE:-''}" == "hostgeneric" ]]; then
-    platform="hostgeneric"
-elif [[ -d /scratch3 ]]; then
-    if [[ -d /apps/slurm_hera ]]; then
-        platform=hera
-    else
-        platform=ursa
-    fi
-    source /etc/profile.d/modules.sh
-
-################# Jet ####################
-elif [[ -d /jetmon ]] ; then
-    source /etc/profile.d/modules.sh
-    platform=jet
-
-################# Cheyenne ####################
-elif [[ -d /glade ]] ; then
-    platform=derecho
-
-################# MSU HPC2 ####################
-elif [[ -d /work/noaa ]] ; then
-    hoststr=$(hostname)
-    if [[ "$hoststr" == "hercules"* ]]; then
-        platform=hercules
-    else
-        platform=orion
-    fi
-
-################# Gaea C6 ####################
-elif [[ -d /gpfs/f6 ]] ; then ### gaea c6
-    platform=gaeac6
-
-################# WCOSS2 ####################
-elif [[ -d /lfs ]] ; then  ### orion
-    platform=wcoss2
-
-################# Generic ####################
-else
-    echo -e "\nunknown machine"
-    exit 9
-fi
-
 module purge
+source ./detect_machine.sh
 module use ${dir_root}/modulefiles
-module load build_${platform}_${COMPILER}.lua
+module load build_${MACHINE}_${COMPILER}.lua
 module list 
 
 build_root=${dir_root}/build
