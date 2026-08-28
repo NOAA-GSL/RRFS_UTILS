@@ -22,8 +22,8 @@ subroutine ncio_ensmean_recenter(ensize,mype,new_comm,l_write_mean,l_recenter, &
    integer,intent(in)    :: mype                     ! rank
    integer,intent(in)    :: new_comm                 ! group communicator
    character (len=*),intent(in)   :: filename        ! General filename stub.
-   character (len=*),intent(in)   :: filetail        ! file type
    character (len=*),intent(in)   :: filename_reconstruct ! Control-based member filename stub
+   character (len=*),intent(in)   :: filetail        ! file type
    character (len=*),intent(inout):: varname         ! Variable to search for.
    logical,intent(in)    :: l_write_mean             ! if write ensmeble mean
    logical,intent(in)    :: l_recenter               ! if recenter
