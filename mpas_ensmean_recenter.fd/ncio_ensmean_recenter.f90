@@ -1,5 +1,5 @@
 subroutine ncio_ensmean_recenter(ensize,mype,new_comm,l_write_mean,l_recenter, &
-     l_reconstruct,varname,filename,filename_reconstruct,filetail,beta)
+     varname,filename,filename_out,filetail,beta)
 !
 !----------------------------------------------------------------------
 !  Purpose: Calculate ensemble mean file from input FV3LAM NETCDF input
@@ -21,13 +21,12 @@ subroutine ncio_ensmean_recenter(ensize,mype,new_comm,l_write_mean,l_recenter, &
    integer,intent(in)    :: ensize                   ! size of ensemble
    integer,intent(in)    :: mype                     ! rank
    integer,intent(in)    :: new_comm                 ! group communicator
-   character (len=*),intent(in)   :: filename        ! General filename stub.
-   character (len=*),intent(in)   :: filename_reconstruct ! Control-based member filename stub
+   character (len=*),intent(in)   :: filename        ! input member filename stub
+   character (len=*),intent(in)   :: filename_out    ! output member filename stub
    character (len=*),intent(in)   :: filetail        ! file type
    character (len=*),intent(inout):: varname         ! Variable to search for.
    logical,intent(in)    :: l_write_mean             ! if write ensmeble mean
    logical,intent(in)    :: l_recenter               ! if recenter
-   logical,intent(in)    :: l_reconstruct             ! if reconstruct control-based members
    real                  :: beta                     ! weighting of the control in the new mean, 0<=beta<=1
                                                      ! new mean = beta * control + ( 1 - beta ) * mean
 !
@@ -68,22 +67,11 @@ subroutine ncio_ensmean_recenter(ensize,mype,new_comm,l_write_mean,l_recenter, &
    
    include 'mpif.h'
 
-!----------------------------------------------------------------------
-!  Safety check: the two operations are mutually exclusive.
-!----------------------------------------------------------------------
-   if (l_recenter .and. l_reconstruct) then
-      if (mype == 0) then
-         write(6,*) 'ERROR: l_recenter and l_reconstruct ', &
-                    'cannot both be .true.'
-      endif
-      call mpi_abort(new_comm,1,iret)
-   endif
-
    rnanals=1.0_8/ensize
 
 !  Open file:
    if ( mype == 0 ) then
-      if(l_recenter .or. l_reconstruct) then
+      if(l_recenter) then
          input_file = trim(filename)//'_control'//trim(filetail)
       else
          input_file = trim(filename)//'_mean'//trim(filetail)
@@ -206,7 +194,7 @@ subroutine ncio_ensmean_recenter(ensize,mype,new_comm,l_write_mean,l_recenter, &
       endif
    end if
 
-   if(l_recenter .or. l_reconstruct) then
+   if(l_recenter) then
       l_positive=.false.
       if( trim(varname)=="ref_f3d" .or. trim(varname)=="qv" .or. trim(varname)=="q2" .or. &
           trim(varname)=="qc" .or. trim(varname)=="qr" .or. trim(varname)=="qi" .or. &
@@ -238,37 +226,21 @@ subroutine ncio_ensmean_recenter(ensize,mype,new_comm,l_write_mean,l_recenter, &
 !
 !  get the values after recenter
          if ( ivtype == 5 ) then
-            if(l_recenter) then
-                data_r = data_r + beta * data_r_diff
-            elseif(l_reconstruct) then
-                data_r = data_r + data_r_diff
-            endif
+            data_r = data_r + beta * data_r_diff
             if(l_positive) data_r=max(data_r, 0.0)
          elseif ( ivtype == 6 ) then
-            if(l_recenter) then
-                data_d = data_d + beta * data_d_diff
-            elseif(l_reconstruct) then
-                data_d = data_d + data_d_diff
-            endif
+            data_d = data_d + beta * data_d_diff
             if(l_positive) data_d=max(data_d, 0.0)
          endif
 !
 ! update each member
 !
-!  Set the member number before constructing the filename.
-!
-         write(UNIT=ce,FMT='(i3.3)') mype
-
-         if(l_recenter) then
-   ! write to original member file
-           input_file = trim(filename)//'_mem'//trim(ce)//trim(filetail)
-         elseif(l_reconstruct) then
-   ! write to control-based member file
-           input_file = trim(filename_reconstruct)//'_mem'// &
-                    trim(ce)//trim(filetail)
-         endif
-
 !  Open file:
+
+         write(UNIT=ce,FMT='(i3.3)') mype
+         input_file = trim(filename_out)//'_mem'//trim(ce)//trim(filetail)
+
+
          if( mype <=1) print *, 'APM write ',trim(input_file), ' ',trim(varname)
          rcode = nf90_open( trim(input_file), NF90_WRITE, cdfid )
          if ( rcode /= 0 ) then

@@ -19,23 +19,22 @@ program gen_be_ensmean
 !
 ! namelist
   character(len=filename_len)  :: filebase
-  character(len=filename_len)  :: filebase_reconstruct
+  character(len=filename_len)  :: filebase_out
   character(len=filename_len)  :: filetail(max_num_file)
   integer                      :: numvar(max_num_file)
   character(len=filename_len)  :: varlist(max_num_file)
   integer :: ens_size
   logical    :: l_write_mean             ! if write ensmeble mean
   logical    :: l_recenter               ! if recenter
-  logical    :: l_reconstruct            ! if reconstruct
   real :: beta
 
-  namelist/setup/ ens_size,l_write_mean,l_recenter,l_reconstruct, &
-                  filebase,filebase_reconstruct,filetail,&
+  namelist/setup/ ens_size,l_write_mean,l_recenter, &
+                  filebase,filebase_out,filetail,&
                   numvar,varlist,beta
 
    character (len=filename_len)   :: directory                 ! General filename stub.
    character (len=filename_len)   :: filename                  ! General filename stub.
-   character (len=filename_len)   :: filename_reconstruct      ! General filename stub.
+   character (len=filename_len)   :: filename_out              ! General filename stub.
 
    integer :: totalnumvar
    character (len=20), allocatable  ::  tailist_all(:)
@@ -83,10 +82,9 @@ program gen_be_ensmean
   filetail=''
   ens_size=1
   filebase='mpasin'
-  filebase_reconstruct='mpasout'
+  filebase_out='mpasout'
   l_write_mean=.false.
-  l_recenter=.false.
-  l_reconstruct=.true.
+  l_recenter=.true.
   beta=1.0
 
 
@@ -106,7 +104,7 @@ program gen_be_ensmean
 
   !filename = trim(adjustl(directory)) // trim(adjustl(filebase))
   filename = trim(adjustl(filebase))
-  filename_reconstruct = trim(adjustl(filebase_reconstruct))
+  filename_out = trim(adjustl(filebase_out))
 !
 ! find how many variables to process
 !
@@ -217,8 +215,8 @@ program gen_be_ensmean
      do k=1,num_iteration
         j=dis_group(color,k)
         if(j>=1 .and. j<=totalnumvar) then
-           call ncio_ensmean_recenter(ens_size,new_rank,new_comm,l_write_mean,l_recenter,l_reconstruct,&
-                                      varlist_all(j),filename,filename_reconstruct,tailist_all(j),beta)
+           call ncio_ensmean_recenter(ens_size,new_rank,new_comm,l_write_mean,l_recenter,&
+                                      varlist_all(j),filename,filename_out,tailist_all(j),beta)
            call mpi_barrier(new_comm,iret)
         endif
      enddo
