@@ -1,6 +1,7 @@
-subroutine ncio_ensmean_recenter(ensize,mype,new_comm,l_write_mean,l_recenter,varname,filename,filetail,beta)
+subroutine ncio_ensmean_recenter(ensize,mype,new_comm,l_write_mean,l_recenter, &
+     varname,filename,filename_out,filetail,beta)
 !
-!---------------------------------------------------------------------- 
+!----------------------------------------------------------------------
 !  Purpose: Calculate ensemble mean file from input FV3LAM NETCDF input
 !  ensemble members.
 !
@@ -12,15 +13,16 @@ subroutine ncio_ensmean_recenter(ensize,mype,new_comm,l_write_mean,l_recenter,va
 !
 !----------------------------------------------------------------------
 
-   use netcdf 
+   use netcdf
    implicit none
 
    integer, parameter    :: max_num_dims = 4          ! Maximum number of dimensions.
 
    integer,intent(in)    :: ensize                   ! size of ensemble
-   integer,intent(in)    :: mype                     ! rank 
+   integer,intent(in)    :: mype                     ! rank
    integer,intent(in)    :: new_comm                 ! group communicator
-   character (len=*),intent(in)   :: filename        ! General filename stub.
+   character (len=*),intent(in)   :: filename        ! input member filename stub
+   character (len=*),intent(in)   :: filename_out    ! output member filename stub
    character (len=*),intent(in)   :: filetail        ! file type
    character (len=*),intent(inout):: varname         ! Variable to search for.
    logical,intent(in)    :: l_write_mean             ! if write ensmeble mean
@@ -234,8 +236,11 @@ subroutine ncio_ensmean_recenter(ensize,mype,new_comm,l_write_mean,l_recenter,va
 ! update each member
 !
 !  Open file:
+
          write(UNIT=ce,FMT='(i3.3)') mype
-         input_file =trim(filename)//'_mem'//trim(ce)//trim(filetail)
+         input_file = trim(filename_out)//'_mem'//trim(ce)//trim(filetail)
+
+
          if( mype <=1) print *, 'APM write ',trim(input_file), ' ',trim(varname)
          rcode = nf90_open( trim(input_file), NF90_WRITE, cdfid )
          if ( rcode /= 0 ) then
