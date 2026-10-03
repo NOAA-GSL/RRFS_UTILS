@@ -1,8 +1,8 @@
 help([[
-This module loads libraries for rrfs-workflow
+This module loads libraries for RRFS_UTILS
 ]])
 
-whatis([===[Loads libraries for rrfs-workflow ]===])
+whatis([===[Loads libraries for RRFS_UTILS ]===])
 prepend_path("MODULEPATH","/contrib/spack-stack/spack-stack-1.9.3/envs/ue-oneapi-2024.2.1/install/modulefiles/Core")
 
 load("stack-oneapi/2024.2.1")
