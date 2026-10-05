@@ -2,8 +2,6 @@
 # FLAGS COMMON TO ALL BUILD TYPES
 ####################################################################
 
-set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS} -assume byterecl -implicitnone -g -traceback")
-
 ####################################################################
 # RELEASE FLAGS
 ####################################################################
@@ -14,7 +12,7 @@ set(CMAKE_Fortran_FLAGS_RELEASE "-O3 -fp-model precise -fpe0")
 # DEBUG FLAGS
 ####################################################################
 
-set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -check bounds -warn -heap-arrays -fpe-all=0 -fpe:0 -check all -implicitnone -g -traceback")
+set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -check bounds -warn -heap-arrays -fpe-all=0 -fpe:0 -check all -assume byterecl -implicitnone -g -traceback")
 
 ####################################################################
 # PRODUCTION FLAGS
