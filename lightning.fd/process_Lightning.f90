@@ -25,7 +25,7 @@ program process_Lightning
 !
 !_____________________________________________________________________
 !
-  use mpi
+  use mpi_f08
   use module_kinds, only: r_kind,i_kind
   use module_mpasio, only: read_MPAS_dim,read_MPAS_lat_lon
   use module_wps_map_utils

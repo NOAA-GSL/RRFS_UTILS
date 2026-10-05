@@ -96,6 +96,8 @@ A full list of all parameters can be found in `namelist_mod.f90` and `rapidrefre
 
 Refer to the `CMakeLists.txt` for the files actually compiled as part of this program. The main driver is `cloudanalysis_mpas_driver.f90` and `get_mpas_bk_mod.f90` contains all the subroutines for reading and writing to the MPAS netCDF files. The `NonVarCldLib/` directory contains various subroutines used the cloud analysis that are model agnostic.
 
+Throughout the program, the model state is typically stored in 3D arrays that are ordered `(lon, lat, z)`. This is an artifact from previous versions of the nonvariational cloud analysis, which used models with lat/lon grids. In MPAS, the horizontal dimensions are compressed into a single dimension that represents the cell index. To accommodate this, the "longitude" dimension is always 1 and the "latitude" dimension represents the cell index in the arrays used to hold the model state. Therefore, a 3D array holding the model state will be indexed as `(1, cell, z)`.
+
 ## Debugging
 
 On some machines (e.g., MSU HPC2 Hercules), this program can crash owing to the stack size being exceeded. This can be fixed by setting the stack size to unlimited in your run script:

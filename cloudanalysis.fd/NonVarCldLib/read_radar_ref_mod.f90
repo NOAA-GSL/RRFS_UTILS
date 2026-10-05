@@ -1,3 +1,7 @@
+module read_radar_ref_mod
+
+contains
+
 SUBROUTINE read_radar_ref(mype,lunin,istart,jstart,   &
                          nlon,nlat,Nmsclvl,numref,ref_mosaic31)
 !
@@ -190,3 +194,5 @@ SUBROUTINE read_radar_ref_bin(mype,lunin,istart,jstart,nlon,nlat,Nmsclvl,ref_mos
   endif
 
 end SUBROUTINE read_radar_ref_bin
+
+end module read_radar_ref_mod

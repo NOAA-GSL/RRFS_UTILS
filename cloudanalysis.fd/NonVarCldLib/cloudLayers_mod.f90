@@ -1,3 +1,7 @@
+module cloudLayers_mod
+
+contains
+
 SUBROUTINE cloudLayers(nlat,nlon,nsig,h_bk,zh,cld_cover_3d,cld_type_3d, &
                        cloudlayers_i)
 !
@@ -165,3 +169,4 @@ SUBROUTINE cloudLayers(nlat,nlon,nsig,h_bk,zh,cld_cover_3d,cld_type_3d, &
 
 END SUBROUTINE cloudLayers
 
+end module cloudLayers_mod
