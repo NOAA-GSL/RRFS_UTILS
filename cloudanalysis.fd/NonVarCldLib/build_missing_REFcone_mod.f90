@@ -1,3 +1,7 @@
+module build_missing_REFcone_mod
+
+contains
+
 SUBROUTINE build_missing_REFcone(mype,nlon,nlat,nsig,krad_bot_in,ref_mos_3d,h_bk,pblh)
 !
 !  radar observation
@@ -243,3 +247,5 @@ SUBROUTINE build_missing_REFcone(mype,nlon,nlat,nsig,krad_bot_in,ref_mos_3d,h_bk
   ENDDO
 
 END SUBROUTINE build_missing_REFcone
+
+end module build_missing_REFcone_mod

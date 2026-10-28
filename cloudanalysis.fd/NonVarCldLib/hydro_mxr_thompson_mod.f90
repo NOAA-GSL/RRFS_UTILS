@@ -1,3 +1,7 @@
+module hydro_mxr_thompson_mod
+
+contains
+
 SUBROUTINE hydro_mxr_thompson (nx, ny, nz, t_3d, p_3d, ref_3d, qr_3d, qnr_3d, qs_3d, istatus, mype )
 !
 ! PURPOSE:
@@ -221,3 +225,5 @@ SUBROUTINE hydro_mxr_thompson (nx, ny, nz, t_3d, p_3d, ref_3d, qr_3d, qnr_3d, qs
 !
   RETURN
 END SUBROUTINE hydro_mxr_thompson
+
+end module hydro_mxr_thompson_mod

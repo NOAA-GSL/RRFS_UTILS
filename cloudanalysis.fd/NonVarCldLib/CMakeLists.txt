@@ -1,25 +1,25 @@
 list(APPEND src_nonvar_cld_lib
   adaslib.f90
   ARPS_cldLib.f90
-  BckgrndCC.f90
-  build_missing_REFcone.f90
-  cloudCover_NESDIS.f90
-  cloudCover_Surface.f90
-  cloudLayers.f90
-  cloudLWC.f90
-  cloud_saturation.f90
-  cloudType.f90
-  convert_lghtn2ref.f90
-  hydro_mxr_thompson.f90
-  map_ctp.f90
-  map_ctp_lar.f90
+  BckgrndCC_mod.f90
+  build_missing_REFcone_mod.f90
+  cloudCover_NESDIS_mod.f90
+  cloudCover_Surface_mod.f90
+  cloudLayers_mod.f90
+  cloudLWC_mod.f90
+  cloud_saturation_mod.f90
+  cloudType_mod.f90
+  convert_lghtn2ref_mod.f90
+  hydro_mxr_thompson_mod.f90
+  map_ctp_mod.f90
+  map_ctp_lar_mod.f90
   mthermo.f90
-  PrecipType.f90
-  read_Lightning_cld.f90
-  read_nasalarc_cld.f90
-  read_radar_ref.f90
-  read_Surface.f90
-  vinterp_radar_ref.f90)
+  PrecipType_mod.f90
+  read_Lightning_cld_mod.f90
+  read_nasalarc_cld_mod.f90
+  read_radar_ref_mod.f90
+  read_Surface_mod.f90
+  vinterp_radar_ref_mod.f90)
 
 add_library(nonvar_cld_lib STATIC ${src_nonvar_cld_lib})
 add_library(${PROJECT_NAME}::nonvar_cld_lib ALIAS nonvar_cld_lib)

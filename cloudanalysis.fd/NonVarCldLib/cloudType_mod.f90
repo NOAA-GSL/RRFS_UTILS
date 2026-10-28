@@ -1,3 +1,7 @@
+module cloudType_mod
+
+contains
+
 SUBROUTINE cloudType(nlat,nlon,nsig,h_bk,t_bk,p_bk,radar_3d,       &
                  cld_cover_3d,cld_type_3d,wthr_type,cloudlayers_i)
 !
@@ -48,6 +52,7 @@ SUBROUTINE cloudType(nlat,nlon,nsig,h_bk,t_bk,p_bk,radar_3d,       &
 
   use module_constants, only: rd_over_cp, h1000, half
   use module_kinds, only: r_single,i_kind,r_kind
+  use ARPS_cldLib, only: get_stability, get_cloudtype
 
   implicit none
   integer(i_kind),INTENT(IN) ::  nlat,nlon,nsig
@@ -60,7 +65,7 @@ SUBROUTINE cloudType(nlat,nlon,nsig,h_bk,t_bk,p_bk,radar_3d,       &
 !
 ! observation
 !
-  real(r_kind),INTENT(IN) :: radar_3d(nlon,nlat,nsig) ! reflectivity
+  real(r_single),INTENT(IN) :: radar_3d(nlon,nlat,nsig) ! reflectivity
 !
 !  Variables for cloud analysis
 !
@@ -145,3 +150,4 @@ SUBROUTINE cloudType(nlat,nlon,nsig,h_bk,t_bk,p_bk,radar_3d,       &
 
 END SUBROUTINE cloudType
 
+end module cloudType_mod

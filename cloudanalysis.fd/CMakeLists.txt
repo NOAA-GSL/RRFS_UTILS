@@ -1,5 +1,5 @@
 list(APPEND src_cloudanalysis
-  pbl_height.f90
+  pbl_height_mod.f90
   rapidrefresh_cldsurf_mod.f90
   namelist_mod.f90
   get_mpas_bk_mod.f90

@@ -1,3 +1,7 @@
+module mthermo
+
+contains
+
 !
 !$$$  subprogram documentation block
 !                .      .    .                                       .
@@ -132,7 +136,7 @@
   real(r_kind), intent(in) :: os,p
   real(r_kind) :: tsa
 
-  real(r_kind) :: a,b,d,tq,x,tqk,w
+  real(r_kind) :: a,b,d,tq,x,tqk
   integer :: i
 
   data b/2.6518986/
@@ -173,7 +177,7 @@
   real(r_kind), intent(in) :: t,td,p
   real(r_kind) :: tw
 
-  real(r_kind) :: aw,ao,pi,tmr,tda,ti,aos,tsa,w,x
+  real(r_kind) :: aw,ao,pi,ti,aos,x
   integer :: i
 
   aw = w(td,p)
@@ -222,8 +226,8 @@
   real(r_kind), intent(in) :: t,p
   real(r_kind) :: w
 
-  real(r_kind) :: esat
-
   w= 622.*esat(t)/(p-esat(t))
   return
   end function w
+
+end module mthermo

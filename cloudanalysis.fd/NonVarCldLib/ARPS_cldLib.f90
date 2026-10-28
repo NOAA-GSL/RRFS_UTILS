@@ -1,3 +1,7 @@
+module ARPS_cldLib
+
+contains
+
 !
 !$$$  subprogram documentation block
 !                .      .    .                                       .
@@ -100,7 +104,6 @@ SUBROUTINE get_stability (nz,t_1d,zs_1d,p_mb_1d,kbtm,ktop               &
 !-----------------------------------------------------------------------
 !
   INTEGER(i_kind) :: k,km1,kp1,klow,khigh
-  REAL(r_single) :: os_fast
 !
 !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 !
@@ -182,6 +185,8 @@ END SUBROUTINE get_stability
 !-----------------------------------------------------------------------
 !
   use module_kinds, only: r_single,i_kind,r_kind
+  use mthermo, only: eslo
+
   IMPLICIT NONE
 !
 !-----------------------------------------------------------------------
@@ -200,7 +205,6 @@ END SUBROUTINE get_stability
   DATA b/2.6518986_r_kind/
 
   REAL(r_kind) :: tc,x,w
-  REAL(r_kind) :: eslo
 !
 !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 !
@@ -750,6 +754,8 @@ SUBROUTINE pcp_type_3d (nx,ny,nz,temp_3d,rh_3d,p_pa_3d                  &
 !-----------------------------------------------------------------------
 !
   use module_kinds, only: r_single,i_kind, r_kind
+  use mthermo, only: tw
+
   IMPLICIT NONE
 !
 !-----------------------------------------------------------------------
@@ -759,7 +765,7 @@ SUBROUTINE pcp_type_3d (nx,ny,nz,temp_3d,rh_3d,p_pa_3d                  &
   REAL(r_single),  intent(in)  :: temp_3d(nx,ny,nz)            ! temperature (K)
   REAL(r_single),  intent(in)  :: rh_3d(nx,ny,nz)              ! relative humudity
   REAL(r_single),  intent(in)  :: p_pa_3d(nx,ny,nz)            ! pressure (Pascal)
-  REAL(r_kind),    intent(in)  :: radar_3d(nx,ny,nz)           ! radar refl. (dBZ)
+  REAL(r_single),    intent(in)  :: radar_3d(nx,ny,nz)           ! radar refl. (dBZ)
 !
 !  OUTPUT:
   INTEGER(i_kind), intent(out) :: istatus
@@ -768,7 +774,6 @@ SUBROUTINE pcp_type_3d (nx,ny,nz,temp_3d,rh_3d,p_pa_3d                  &
 !
 !  LOCAL functions:
   REAL(r_kind) :: wb_melting_thres             ! define melting temp. thresh.
-  REAL(r_kind) :: tw                           ! for wet-bulb temp calcl'n
 !
 !-----------------------------------------------------------------------
 !
@@ -1231,7 +1236,6 @@ SUBROUTINE slwc_revb(cb_pa,cb_k,gt_pa,gt_k,ct_k,                        &
   DATA eps/0.622_r_kind/,cpd/1.0042E3_r_kind/,cw/4.218E3_r_kind/,rd/287.05_r_kind/,alhv/2.501E6_r_kind/
   INTEGER(i_kind) :: cty,i
   real(r_kind) :: p0,p,t0,tg,ctt,tk,e,r,cpt,t1,thetaq,rv,t,tw
-  real(r_kind) :: vapor
 !
 !
   i_status1=1
@@ -1403,3 +1407,5 @@ END SUBROUTINE slwc_revb
   vapor=1013.246_r_kind*10._r_kind**e
   RETURN
   END FUNCTION vapor
+
+end module ARPS_cldLib

@@ -1,3 +1,7 @@
+module vinterp_radar_ref_mod
+
+contains
+
 SUBROUTINE vinterp_radar_ref(mype,nlon,nlat,nsig,Nmsclvl,ref_mos_3d,ref_mosaic31,h_bk,zh)
 !
 !
@@ -140,3 +144,5 @@ SUBROUTINE vinterp_radar_ref(mype,nlon,nlat,nsig,Nmsclvl,ref_mos_3d,ref_mosaic31
 !
 
 END SUBROUTINE vinterp_radar_ref
+
+end module vinterp_radar_ref_mod

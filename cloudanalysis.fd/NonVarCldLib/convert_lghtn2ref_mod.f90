@@ -1,3 +1,7 @@
+module convert_lghtn2ref_mod
+
+contains
+
 SUBROUTINE convert_lghtn2ref(mype,nlon,nlat,nsig,ref_mos_3d,lightning,h_bk)
 !
 !$$$  subprogram documentation block
@@ -195,3 +199,5 @@ SUBROUTINE convert_lghtn2ref(mype,nlon,nlat,nsig,ref_mos_3d,lightning,h_bk)
   ENDDO
 
 END SUBROUTINE convert_lghtn2ref
+
+end module convert_lghtn2ref_mod

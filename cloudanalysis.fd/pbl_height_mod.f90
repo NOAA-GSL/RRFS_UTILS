@@ -1,4 +1,8 @@
-SUBROUTINE calc_pbl_height(mype,nlat,nlon,nsig,q_bk,t_bk,p_bk,pblh)
+module pbl_height_mod
+
+contains
+
+SUBROUTINE calc_pbl_height(nlat,nlon,nsig,q_bk,t_bk,p_bk,pblh)
 !
 !$$$  subprogram documentation block
 !                .      .    .                                       .
@@ -43,7 +47,6 @@ SUBROUTINE calc_pbl_height(mype,nlat,nlon,nsig,q_bk,t_bk,p_bk,pblh)
 
   implicit none
 
-  integer(i_kind),intent(in):: mype
   integer(i_kind),intent(in):: nlat,nlon,nsig
 !
 !  background
@@ -74,15 +77,12 @@ SUBROUTINE calc_pbl_height(mype,nlat,nlon,nsig,q_bk,t_bk,p_bk,pblh)
       DO k = 1,nsig
         qsp=q_bk(i,j,k)/(1.0+q_bk(i,j,k))          ! q_bk = water vapor mixing ratio
         thetav(k) = t_bk(i,j,k)*(1.0 + 0.61 * qsp) ! qsp  = spcific humidity
-! if(mype==10.and.i==10.and.j==10) then
-!     write(*,*) 'cal PBL=',k,thetav(k),t_bk(i,j,k),q_bk(i,j,k)
-! endif
       ENDDO
       
       pblh(i,j) = 0.0_r_single
       thsfc = thetav(1)
       k=1
-      DO while (abs(pblh(i,j)) < 0.0001_r_single)
+      DO while (abs(pblh(i,j)) < 0.0001_r_single .and. k < nsig-2 )
         if( thetav(k) > thsfc + 1.0_r_single ) then
           pblh(i,j) = float(k) - (thetav(k) - (thsfc + 1.0_r_single))/   &
                              max((thetav(k)-thetav(k-1)),0.01_r_single)
@@ -91,13 +91,9 @@ SUBROUTINE calc_pbl_height(mype,nlat,nlon,nsig,q_bk,t_bk,p_bk,pblh)
       ENDDO
       if(abs(pblh(i,j)) < 0.0001) pblh(i,j)=2.0_r_single
 
-! if(mype==10.and.i==10.and.j==10) then
-!     write(*,*) 'cal PBL=',pblh(i,j),k
-! endif
-
-
     enddo   ! i
   enddo     ! j
 
 END SUBROUTINE calc_pbl_height
 
+end module pbl_height_mod

@@ -1,3 +1,7 @@
+module PrecipType_mod
+
+contains
+
 SUBROUTINE PrecipType(nlat,nlon,nsig,t_bk,p_bk,q_bk,radar_3d,   &
                  wthr_type,cldpcp_type_3d)
 !
@@ -45,6 +49,8 @@ SUBROUTINE PrecipType(nlat,nlon,nsig,t_bk,p_bk,q_bk,radar_3d,   &
 
   use module_constants, only: rd_over_cp, h1000
   use module_kinds, only: r_single,i_kind,r_kind
+  use ARPS_cldLib, only: pcp_type_3d
+  use adaslib, only: f_qvsat
 
   implicit none
   integer(i_kind),INTENT(IN):: nlat,nlon,nsig
@@ -60,7 +66,7 @@ SUBROUTINE PrecipType(nlat,nlon,nsig,t_bk,p_bk,q_bk,radar_3d,   &
 !
 ! observation
 !
-  real(r_kind),INTENT(IN) :: radar_3d(nlon,nlat,nsig)   ! reflectivity
+  real(r_single),INTENT(IN) :: radar_3d(nlon,nlat,nsig)   ! reflectivity
 !
 !
 !  Variables for cloud analysis
@@ -79,7 +85,6 @@ SUBROUTINE PrecipType(nlat,nlon,nsig,t_bk,p_bk,q_bk,radar_3d,   &
   real(r_single) :: rh_3d(nlon,nlat,nsig)   ! relative humidity
   real(r_single) :: p_pa_3d(nlon,nlat,nsig)   ! 
   REAL(r_single) :: qvsat
-  REAL(r_single) :: f_qvsat
   INTEGER :: istatus
 !
 !====================================================================
@@ -116,3 +121,4 @@ SUBROUTINE PrecipType(nlat,nlon,nsig,t_bk,p_bk,q_bk,radar_3d,   &
 
 END SUBROUTINE precipType
 
+end module PrecipType_mod

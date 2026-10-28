@@ -30,7 +30,7 @@ program process_NSSL_mosaic
 !
 !_____________________________________________________________________
 !
-  use mpi
+  use mpi_f08
   use module_kinds, only: r_kind,i_kind
   use module_read_NSSL_refmosaic, only: read_nsslref
   use module_mpasio, only: read_MPAS_dim,read_MPAS_lat_lon,read_MPAS_1D_int

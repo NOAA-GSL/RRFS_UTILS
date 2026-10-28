@@ -1,3 +1,7 @@
+module cloudCover_Surface_mod
+
+contains
+
 SUBROUTINE cloudCover_Surface(mype,nlat,nlon,nsig,thunderRadius,&
                         cld_bld_hgt,t_bk,p_bk,q,h_bk,zh,  &
                         mxst_p,NVARCLD_P,numsao,OI,OJ,OCLD,OWX,Oelvtn,Odist,&
@@ -67,6 +71,7 @@ SUBROUTINE cloudCover_Surface(mype,nlat,nlon,nsig,thunderRadius,&
 !
 
   use module_kinds, only: r_single,i_kind,r_kind
+  use BckgrndCC_mod, only: BckgrndCC
 
   implicit none
 
@@ -435,3 +440,4 @@ SUBROUTINE cloudCover_Surface(mype,nlat,nlon,nsig,thunderRadius,&
 
 END SUBROUTINE cloudCover_Surface
 
+end module cloudCover_Surface_mod

@@ -1,3 +1,7 @@
+module cloud_saturation_mod
+
+contains
+
 SUBROUTINE cloud_saturation(mype,l_conserve_thetaV,i_conserve_thetaV_iternum, &
                  nlat,nlon,nsig,q_bk,t_bk,p_bk, &
                  cld_cover_3d,wthr_type,  &
@@ -84,7 +88,7 @@ SUBROUTINE cloud_saturation(mype,l_conserve_thetaV,i_conserve_thetaV_iternum, &
 ! temp.
 !
   INTEGER(i_kind) :: i,j,k
-  real(r_single) :: cloudqvis,ruc_saturation
+  real(r_single) :: cloudqvis
 
 ! --- Key parameters
 !     Rh_clear_p        = 0.80          RH to use when clearing cloud
@@ -299,7 +303,6 @@ function ruc_saturation(Temp,pressure)
 !
     implicit none
     real(r_single) :: ruc_saturation
-    real           :: RSLF,RSIF
 
     REAL(r_kind),  intent(in) :: Temp       ! temperature in K
     real(r_single),intent(in) :: pressure   ! pressure  (hpa)
@@ -411,3 +414,4 @@ end function ruc_saturation
 
       END FUNCTION RSIF
 
+end module cloud_saturation_mod

@@ -1,3 +1,7 @@
+module cloudCover_NESDIS_mod
+
+contains
+
 SUBROUTINE cloudCover_NESDIS(mype,regional_time,nlat,nlon,nsig,&
                         xlong,xlat,t_bk,p_bk,h_bk,xland, &
                         soil_tbk,sat_ctp,sat_tem,w_frac,&
@@ -64,8 +68,9 @@ SUBROUTINE cloudCover_NESDIS(mype,regional_time,nlat,nlon,nsig,&
 !
 
   use module_constants, only: rd_over_cp, h1000
-  use module_constants, only: deg2rad, rad2deg, pi
+  use module_constants, only: deg2rad, pi
   use module_kinds, only: r_single,i_kind,r_kind
+  use adaslib, only: getdays
   
   implicit none
 
@@ -150,7 +155,7 @@ SUBROUTINE cloudCover_NESDIS(mype,regional_time,nlat,nlon,nsig,&
   PARAMETER ( null_p     = -1       )
   PARAMETER ( spval_p    =  99999.0 )
 
-  INTEGER(i_kind)  :: i,j,k,k1,i1,j1,jp1,jm1,ip1,im1
+  INTEGER(i_kind)  :: i,j,k,k1
   INTEGER(i_kind)  :: gmt,nday,iyear,imonth,iday
   REAL(r_kind)     :: declin
   real(r_kind)     :: hrang,xxlat
@@ -166,13 +171,19 @@ SUBROUTINE cloudCover_NESDIS(mype,regional_time,nlat,nlon,nsig,&
 
   real(r_single)     :: tsmin
 
-  INTEGER(i_kind)  :: kisotherm, ibuddy, ktempmin
+  INTEGER(i_kind)  :: kisotherm, ktempmin
   real(r_kind)     :: tempmin,dth2dp2, stab, stab_threshold
 
   real(r_kind)     :: firstcloud, pdiff,pdiffabove
 
   INTEGER(i_kind)  :: k_closest, cld_warm_strat(nlon,nlat)
   REAL(r_kind)     :: tdiff
+
+! Unused variables in current implementation
+! May need to uncomment if some of the code below is uncommented
+!
+!  INTEGER(i_kind)  :: i1,j1,jp1,jm1,ip1,im1
+!  INTEGER(i_kind)  :: ibuddy
 
 !
 !====================================================================
@@ -207,13 +218,13 @@ SUBROUTINE cloudCover_NESDIS(mype,regional_time,nlat,nlon,nsig,&
      end do
    end do
 
-   if( p_bk(nlon/2,nlat/2,2) < 5000.0_r_kind ) then
-     write(6,*) 'cloudCover_NESDIS: pressure unit check failed', p_bk(nlon/2,nlat/2,2) 
+   if( p_bk(max(nlon/2,1),nlat/2,2) < 5000.0_r_kind ) then
+     write(6,*) 'cloudCover_NESDIS: pressure unit check failed', p_bk(max(nlon/2,1),nlat/2,2) 
      stop 115
    endif
-   if( tbk_k(nlon/2,nlat/2,nsig-2) > 300._r_kind) then
+   if( tbk_k(max(nlon/2,1),nlat/2,nsig-2) > 300._r_kind) then
      write(6,*) 'cloudCover_NESDIS: temperature unit check failed', &
-                tbk_k(nlon/2,nlat/2,nsig-2) 
+                tbk_k(max(nlon/2,1),nlat/2,nsig-2) 
      stop 116
    endif
 
@@ -236,6 +247,7 @@ SUBROUTINE cloudCover_NESDIS(mype,regional_time,nlat,nlon,nsig,&
    npts_clear = 0
    npts_build = 0
    npts_bel650 = 0
+   npts_warm_cld_flag = 0
    npts_tskin_flag = 0
    npts_stab_flag = 0
    npts_ptly_cloudy = 0
@@ -720,3 +732,4 @@ SUBROUTINE cloudCover_NESDIS(mype,regional_time,nlat,nlon,nsig,&
 !
 END SUBROUTINE cloudCover_NESDIS
 
+end module cloudCover_NESDIS_mod

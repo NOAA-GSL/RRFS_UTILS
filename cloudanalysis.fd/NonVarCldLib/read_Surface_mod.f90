@@ -1,3 +1,7 @@
+module read_Surface_mod
+
+contains
+
 SUBROUTINE read_Surface(mype,lunin,istart,jstart,nlon,nlat,& 
                   numsao,NVARCLD_P,OI,OJ,OCLD,OWX,Oelvtn,Odist,cstation, &
                   OIstation,OJstation)
@@ -237,3 +241,4 @@ SUBROUTINE read_Surface(mype,lunin,istart,jstart,nlon,nlat,&
 
 END SUBROUTINE read_Surface
 
+end module read_Surface_mod

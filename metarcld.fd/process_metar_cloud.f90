@@ -25,7 +25,7 @@ program  process_metar_cloud
 !
 !_____________________________________________________________________
 !
-  use mpi
+  use mpi_f08
   use module_kinds, only: r_kind,i_kind,r_single
   use module_mpasio, only: read_MPAS_dim,read_MPAS_lat_lon
 

@@ -28,13 +28,14 @@ module get_mpas_bk_mod
 !_____________________________________________________________________
 !
 
-  use mpi
+  use mpi_f08
   use module_kinds,   only: r_single,i_kind, r_kind
   use module_constants, only: init_constants,init_constants_derived
   use module_constants, only: rd,h1000,rd_over_cp,grav
   use module_constants, only: rad2deg
   use module_mpasio, only: read_MPAS_dim,read_MPAS_2D_real,read_MPAS_1D_real,read_MPAS_1D_int
   use module_mpasio, only: update_MPAS_2D_real,create_MPAS_2D_real
+  use pbl_height_mod, only: calc_pbl_height
 
   implicit none
   private
@@ -160,6 +161,14 @@ contains
         endif
       enddo 
 
+! Allocate empty arrays on all other processors
+! Will fill using MPI_BCAST below
+! Needed to avoid runtime errors with debugging flags on
+    else
+      allocate(counts_send_1d(npe))
+      allocate(counts_send_2d(npe))
+      allocate(displ_2d(npe))
+
     endif
 
 ! Determine size of the background arrays on each processor
@@ -168,6 +177,9 @@ contains
     call MPI_BCAST(remainder,1,mpi_integer,0,mpi_comm_world,ierror)
     call MPI_BCAST(nz,1,mpi_integer,0,mpi_comm_world,ierror)
     call MPI_BCAST(displ_1d,npe,mpi_integer,0,mpi_comm_world,ierror)
+    call MPI_BCAST(counts_send_1d,npe,mpi_integer,0,mpi_comm_world,ierror)
+    call MPI_BCAST(counts_send_2d,npe,mpi_integer,0,mpi_comm_world,ierror)
+    call MPI_BCAST(displ_2d,npe,mpi_integer,0,mpi_comm_world,ierror)
     if (mype < remainder) then 
       nCell = min_cell + 1
     else
@@ -260,9 +272,13 @@ contains
 ! Height above ground (m AGL)
 ! Note that zgrid is the MSL height of the interface between two layers. We want the AGL height of 
 ! the center of the layer
+! Create dummy arrays on processors other than 0 to avoid runtime errors when debugging flags on
     if (mype == 0) then
       allocate(tmp1_full(nz+1, nCell_full))
       allocate(tmp2_full(nz, nCell_full))
+    else
+      allocate(tmp1_full(nz+1, 1))
+      allocate(tmp2_full(nz, 1))
     endif
     allocate(tmp(nz, nCell))
     allocate(h_bk(1,nCell,nz))
@@ -274,8 +290,8 @@ contains
       do i=1,nz
         tmp2_full(i,:) = 0.5*(tmp1_full(i,:) + tmp1_full(i+1,:))
       enddo
-      deallocate(tmp1_full)
     endif
+    deallocate(tmp1_full)
     call MPI_BARRIER(mpi_comm_world,ierror)
     call MPI_SCATTERV(tmp2_full,counts_send_2d,displ_2d,MPI_REAL, &
                       tmp,nCell*nz,MPI_REAL,0,mpi_comm_world,ierror)
@@ -286,9 +302,7 @@ contains
 
     call MPI_BARRIER(mpi_comm_world,ierror)
     deallocate(tmp)
-    if (mype == 0) then
-      deallocate(tmp2_full)
-    endif
+    deallocate(tmp2_full)
 
     do i=1,nz
       write(6,'(A12,I12,2E12.4)') 'hgt', i, maxval(h_bk(1,:,i)), minval(h_bk(1,:,i))
@@ -395,8 +409,11 @@ contains
 
 ! Land/water mask (1 = land, 0 = water)
 ! Cannot use read_scatter_1d_field b/c landmask is an integer
+! Create dummy arrays on processors other than 0 to avoid runtime errors when debugging flags on
     if (mype == 0) then
       allocate(tmp_int_full(nCell_full))
+    else
+      allocate(tmp_int_full(1))
     endif
     allocate(tmp_int(nCell))
     allocate(xland(1,nCell))
@@ -414,9 +431,7 @@ contains
 
     call MPI_BARRIER(mpi_comm_world,ierror)
     deallocate(tmp_int)
-    if (mype == 0) then
-      deallocate(tmp_int_full)
-    endif
+    deallocate(tmp_int_full)
 
     write(6,'(A12,I12,2F12.4)') 'xland', -1, maxval(xland(1,:)), minval(xland(1,:))
 
@@ -613,8 +628,11 @@ contains
     if (present(rem_dim)) remove_dim=rem_dim
 
 ! Allocate temporary arrays
+! Create dummy arrays on processors other than 0 to avoid runtime errors when debugging flags on
     if (mype == 0) then
       allocate(tmp_full(nCell_full))
+    else
+      allocate(tmp_full(1))
     endif
     allocate(tmp(nCell))
 
@@ -633,9 +651,7 @@ contains
 ! Clean up
     call MPI_BARRIER(mpi_comm_world,ierror)
     deallocate(tmp)
-    if (mype == 0) then
-      deallocate(tmp_full)
-    endif
+    deallocate(tmp_full)
 
   end subroutine read_scatter_1d_field
 
@@ -670,8 +686,11 @@ contains
     integer :: i,ierror
 
 ! Allocate temporary arrays
+! Create dummy arrays on processors other than 0 to avoid runtime errors when debugging flags on
     if (mype == 0) then
       allocate(tmp_full(nz, nCell_full))
+    else
+      allocate(tmp_full(nz, 1))
     endif
     allocate(tmp(nz, nCell))
 
@@ -692,9 +711,7 @@ contains
 ! Clean up
     call MPI_BARRIER(mpi_comm_world,ierror)
     deallocate(tmp)
-    if (mype == 0) then
-      deallocate(tmp_full)
-    endif
+    deallocate(tmp_full)
 
   end subroutine read_scatter_2d_field
 
@@ -740,8 +757,11 @@ contains
     if (present(write_minmax)) do_write=write_minmax
 
 ! Allocate temporary arrays
+! Create dummy arrays on processors other than 0 to avoid runtime errors when debugging flags on
     if (mype == 0) then
       allocate(tmp_full(nz,nCell_full))
+    else
+      allocate(tmp_full(nz,1))
     endif
     allocate(tmp(nz,nCell))
 
@@ -768,9 +788,7 @@ contains
 
 ! Clean up
     call MPI_BARRIER(mpi_comm_world,ierror)
-    if (mype == 0) then
-      deallocate(tmp_full)
-    endif
+    deallocate(tmp_full)
     deallocate(tmp)
 
   end subroutine gather_write_2d_field

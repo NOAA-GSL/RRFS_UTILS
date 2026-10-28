@@ -1,3 +1,7 @@
+module BckgrndCC_mod
+
+contains
+
 SUBROUTINE  BckgrndCC(nsig,tbk,pbk,q,hbk,zh,   &
                       cv_bk,t_k)
 !
@@ -47,6 +51,7 @@ SUBROUTINE  BckgrndCC(nsig,tbk,pbk,q,hbk,zh,   &
 !
   use module_kinds, only: r_single,i_kind,r_kind
   use module_constants, only: h1000, rd_over_cp, g_over_rd
+  use adaslib, only: rh_to_cldcv, f_qvsat
 
   implicit none
 
@@ -77,9 +82,8 @@ SUBROUTINE  BckgrndCC(nsig,tbk,pbk,q,hbk,zh,   &
   INTEGER :: i,j,k
 
 
-  REAL(r_kind) :: f_qvsat
+  REAL :: aa,bb
   REAL(r_kind) :: qvsat
-  REAL(r_kind) :: rh_to_cldcv
 
   REAL(r_kind) :: z_ref,x
   REAL(r_kind) :: arg,arg2, t_ref_c, td_ref_c
@@ -94,7 +98,9 @@ SUBROUTINE  BckgrndCC(nsig,tbk,pbk,q,hbk,zh,   &
 !
   do k=1,nsig
         t_k(k)=tbk(k)*(pbk(k)/h1000)**rd_over_cp
-        qvsat=f_qvsat(pbk(k)*100.0_r_kind,t_k(k))   
+        aa=pbk(k)*100.0_r_kind
+        bb=t_k(k)
+        qvsat=f_qvsat(aa,bb)   
                     ! Saturation water vapor specific humidity 
         qvsat = qvsat/(1.0 - qvsat)  ! convert to saturation mixing ratio (kg/kg)
         rhbk(k)=100._r_kind*MIN(1._r_kind,MAX(0._r_kind,(q(k)/qvsat)))
@@ -144,3 +150,5 @@ SUBROUTINE  BckgrndCC(nsig,tbk,pbk,q,hbk,zh,   &
 !
 
 END SUBROUTINE BckgrndCC
+
+end module BckgrndCC_mod

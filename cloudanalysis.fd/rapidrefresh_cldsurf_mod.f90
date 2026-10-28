@@ -351,8 +351,11 @@ contains
     use module_kinds, only: i_kind 
 !    use gsi_metguess_mod, only: gsi_metguess_get
     implicit none
-    integer(i_kind) ivar,i,ier
-    logical have_hmeteor(5)
+
+! These variables are from sections of code that are commented out
+!    integer(i_kind) ivar,i,ier
+!    logical have_hmeteor(5)
+
     character(len=2),parameter :: hydrometeors(5) = (/ 'qi', &
                                                        'ql', &
                                                        'qr', &

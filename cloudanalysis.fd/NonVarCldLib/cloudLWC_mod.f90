@@ -1,3 +1,7 @@
+module cloudLWC_mod
+
+contains
+
 SUBROUTINE cloudLWC_stratiform(mype,nlat,nlon,nsig,q_bk,t_bk,p_bk, &
                  cld_cover_3d,cld_type_3d,wthr_type,cloudlayers_i,  &
                  cldwater_3d,cldice_3d)
@@ -98,10 +102,10 @@ SUBROUTINE cloudLWC_stratiform(mype,nlat,nlon,nsig,q_bk,t_bk,p_bk, &
 
   real(r_single)    Cloud_q_qvis_rat_p, cloud_q_qvis_ratio
   real(r_single)    auto_conver
-  real(r_single)    rh_clear_p
+!  real(r_single)    rh_clear_p
   data  Cloud_q_qvis_rat_p/ 0.05_r_single/
   data  auto_conver       /0.0002_r_single/
-  data  rh_clear_p        /0.8_r_single/
+!  data  rh_clear_p        /0.8_r_single/
 
   real(r_kind) ::  es0_p
   parameter (es0_p=6.1121_r_kind)     ! saturation vapor pressure (mb)
@@ -289,6 +293,7 @@ SUBROUTINE cloudLWC_Cumulus(nlat,nlon,nsig,h_bk,t_bk,p_bk,                      
 
   use module_constants, only: rd_over_cp, h1000
   use module_kinds, only: r_single,i_kind,r_kind
+  use ARPS_cldLib, only: get_slwc1d, get_sfm_1d
 
   implicit none
   integer(i_kind),intent(in) :: nlat,nlon,nsig
@@ -425,3 +430,5 @@ SUBROUTINE cloudLWC_Cumulus(nlat,nlon,nsig,h_bk,t_bk,p_bk,                      
   ENDDO  ! j
 
 END SUBROUTINE cloudLWC_Cumulus
+
+end module cloudLWC_mod
