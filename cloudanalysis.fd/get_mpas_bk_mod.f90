@@ -36,6 +36,7 @@ module get_mpas_bk_mod
   use module_mpasio, only: read_MPAS_dim,read_MPAS_2D_real,read_MPAS_1D_real,read_MPAS_1D_int
   use module_mpasio, only: update_MPAS_2D_real,create_MPAS_2D_real
   use pbl_height_mod, only: calc_pbl_height
+  use rapidrefresh_cldsurf_mod, only: i_nz_in
 
   implicit none
   private
@@ -137,6 +138,11 @@ contains
       call read_MPAS_dim(mpasout_fname, dim_name, nCell_full)
       dim_name = 'nVertLevels'
       call read_MPAS_dim(mpasout_fname, dim_name, nz)
+
+! Only read the first i_nz_in levels
+      if (nz > i_nz_in) then
+        nz = i_nz_in
+      endif
 
 ! Determine dimensions of background arrays on each processor
       allocate(counts_send_1d(npe))
