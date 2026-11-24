@@ -262,7 +262,7 @@ module rapidrefresh_cldsurf_mod
   public :: n0_rain
   public :: r_cloudfrac_threshold
   public :: l_cld_uncertainty
-  public: i_nz_in
+  public :: i_nz_in
 
   logical l_hydrometeor_bkio
   real(r_kind)  dfi_radar_latent_heat_time_period
