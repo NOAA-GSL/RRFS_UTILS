@@ -71,7 +71,8 @@ program cloudanalysis
                                       l_precip_clear_only,l_fog_off,cld_bld_coverage,cld_clr_coverage,&
                                       i_T_Q_adjust,i_precip_vertical_check,l_rtma3d, &
                                       l_qnr_from_qr, n0_rain, &
-                                      r_cloudfrac_threshold,l_cld_uncertainty
+                                      r_cloudfrac_threshold,l_cld_uncertainty, &
+                                      i_nz_in
 
 ! These options are not used by the current cloudanalysis implementation
 !  use rapidrefresh_cldsurf_mod, only: dfi_radar_latent_heat_time_period,   &
