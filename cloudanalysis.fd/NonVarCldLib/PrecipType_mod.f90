@@ -105,9 +105,9 @@ SUBROUTINE PrecipType(nlat,nlon,nsig,t_bk,p_bk,q_bk,radar_3d,   &
        temp_3d(i,j,k)=t_bk(i,j,k)*(p_bk(i,j,k)/h1000)**rd_over_cp ! convert to K
        qvsat=f_qvsat(p_bk(i,j,k)*100.0_r_single,temp_3d(i,j,k))
        if (qvsat > 0.99999) then
-         write(6, *) "WARNING: qvsat is approaching 1 in PrecipType_mod.f90"
-         write(6, *) "This may result in division by 0 errors"
-         write(6, *) "To avoid division by 0 near model top, try reducing i_nz_in in namelist"
+         write(6, *) "WARNING: qvsat > 0.99999 in PrecipType_mod.f90"
+         write(6, *) "This may result in division by 0 or negative saturation mixing ratios"
+         write(6, *) "To avoid this undesirable behavior, try reducing i_nz_in in namelist"
          write(6, '(A,3I8,3F12.4)') 'i,j,k,T,p,qvsat = ',i,j,k,temp_3d(i,j,k),p_bk(i,j,k),qvsat
        endif
        qvsat = qvsat/(1.0_r_single-qvsat)   ! convert to mixing ratio (kg/kg)
