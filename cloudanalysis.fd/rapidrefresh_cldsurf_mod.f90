@@ -441,7 +441,7 @@ contains
     n0_rain = 100000000.0_r_kind          ! in m**-4; default value assumes smaller drops than in M-P distribution
     r_cloudfrac_threshold = 0.45_r_kind               ! threshold for 1st guess cloud fraction to use cloud building
     l_cld_uncertainty = .false.                       ! flag to generate hydrometeor uncertainty file (default FALSE)
-    i_nz_in = 55                                      ! Only read <= 55 vertical levels
+    i_nz_in = 60                                      ! Only read <= 60 vertical levels
 
     return
   end subroutine init_rapidrefresh_cldsurf
