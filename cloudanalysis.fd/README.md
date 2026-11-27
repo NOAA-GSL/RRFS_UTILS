@@ -91,6 +91,7 @@ A full list of all parameters can be found in `namelist_mod.f90` and `rapidrefre
 | `l_qnr_from_qr` | .false. | Option to compute rain number concentration from rain mixing ratio. |
 | `n0_rain` | 1e8 | Intercept parameter for raindrop size distribution. |
 | `r_cloudfrac_threshold` | 0.45 | Model cloud fraction threshold for cloud building. |
+| `i_nz_in` | 60 | Number of vertical levels to adjust (starting from the surface). For models with high tops, it is recommended that the user adjusts this parameter so that the program does not operate on the highest model levels. Applying the program in very low pressures can result in negative or undefined mixing ratios, which can lead to crashes. |
 
 ## Code Overview
 
